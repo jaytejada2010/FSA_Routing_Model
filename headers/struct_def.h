@@ -90,3 +90,17 @@ typedef struct{
     int index;
     int type;
 }node;
+
+typedef struct{
+    int nn;
+    int nk;
+    int nr;
+    int ntr;
+    int vel;
+    int bmax;
+    int cpow;
+    int timemax;
+    int qmax;
+    float f0char;
+    int f0vehicle;
+}params;

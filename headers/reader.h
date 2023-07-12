@@ -87,8 +87,7 @@ params getParams(ifstream &inFile){
             if(tokens.size() == 10)
                 f0char = stof(intermediate);
         }
-    }
-    
+    }    
     params p = {tokens[0], tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6], tokens[7], tokens[8], f0char, tokens[10]};
 
     return p;
@@ -99,31 +98,25 @@ vector <Customer_Node> getCustomers(ifstream &inFile){
     int x;
     string line;
 
-    for(x = 0; x < 4; x++){
+    /** reposition file pointer to first data row **/
+    for(x = 0; x < 4; x++)
         getline(inFile, line);
-    }
 
     // Vector of string to save tokens
     vector <int> tokens;
-     
-    // stringstream class check1
     stringstream check1;
-     
     string intermediate;
     
     for(x = 0; x < prog_params.nn; x++){
         getline(inFile, line);
-        cout << line << endl;
         check1 = stringstream(line);
 
         // Tokenizing w.r.t. space ' '
         while(getline(check1, intermediate, ' ')){
-
             if(isdigit(intermediate.front())){
                 tokens.push_back(stoi(intermediate));
             }
         }
-
         c.push_back(Customer_Node(tokens[1], tokens[2], tokens[3], tokens[4]));
         tokens.clear();
     }
@@ -136,17 +129,13 @@ vector <Charging_Node> getChargers(ifstream &inFile){
     int x, i;
     string line;
 
-    for(x = 0; x < 4; x++){
+    /** reposition file pointer to first data row **/
+    for(x = 0; x < 4; x++)
         getline(inFile, line);
-        cout << line << endl;
-    }
 
     // Vector of string to save tokens
     vector <int> tokens;
-     
-    // stringstream class check1
     stringstream check1;
-     
     string intermediate;
     
     for(x = 0, i = prog_params.nr + 1; x < i; x++){
@@ -160,7 +149,6 @@ vector <Charging_Node> getChargers(ifstream &inFile){
                 tokens.push_back(stoi(intermediate));
             }
         }
-
         r.push_back(Charging_Node(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6]));
         tokens.clear();
     }
@@ -174,10 +162,8 @@ vector <Technology> getTechnologies(ifstream &inFile){
     float cost;
     string line;
 
-    for(x = 0; x < 4; x++){
+    for(x = 0; x < 4; x++)
         getline(inFile, line);
-        cout << line << endl;
-    }
 
     // Vector of string to save tokens
     vector <int> tokens;
@@ -186,7 +172,6 @@ vector <Technology> getTechnologies(ifstream &inFile){
     
     for(x = 0; x < 3; x++){
         getline(inFile, line);
-        cout << line << endl;
         check1 = stringstream(line);
 
         // Tokenizing w.r.t. space ' '
@@ -197,7 +182,6 @@ vector <Technology> getTechnologies(ifstream &inFile){
                     cost = stof(intermediate);
             }
         }
-
         t.push_back(Technology(tokens[1], cost));
         tokens.clear();
     }

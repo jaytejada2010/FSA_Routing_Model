@@ -203,15 +203,15 @@ typedef struct{
 }node;
 
 typedef struct{
-    int nn;
-    int nk;
-    int nr;
-    int ntr;
-    int vel;
-    int bmax;
-    int cpow;
-    int timemax;
-    int qmax;
-    float f0char;
-    int f0vehicle;
+    int nn; // number of nodes
+    int nk; // number of vehicles available
+    int nr; // number of recharge stations (excluding depot)
+    int ntr; //
+    int vel; // velocity or average speed 25km/h
+    int bmax; // battery capacity 20KWh
+    int cpow; //energy consumption 0.125 KWh/km
+    int timemax; //maximum route duration 8 hours => 480 minutes
+    int qmax; // vehicle capacity 2300kg
+    float f0char; // fixed cost of recharge 2.270 euro/cycle
+    int f0vehicle; //
 }params;

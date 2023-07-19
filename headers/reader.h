@@ -22,6 +22,8 @@ vector <Customer_Node> c_nodes;
 vector <Charging_Node> r_nodes;
 vector <Technology> tech_list;
 
+int num_of_nodes = 1; // by default is 1 which is the depot
+
 void readFile(string s){
     ifstream inFile;
     inFile.open(s);
@@ -34,6 +36,9 @@ void readFile(string s){
         c_nodes = getCustomers(inFile);
         r_nodes = getChargers(inFile);
         tech_list = getTechnologies(inFile);
+        
+        // update total number of nodes 
+        num_of_nodes += prog_params.num_of_customers + prog_params.num_of_recharge;
         
     }else{
         cout << "Unable to open file " << s << endl;
@@ -107,7 +112,7 @@ vector <Customer_Node> getCustomers(ifstream &inFile){
     stringstream check1;
     string intermediate;
     
-    for(x = 0; x < prog_params.nn; x++){
+    for(x = 0; x < prog_params.num_of_customers; x++){
         getline(inFile, line);
         check1 = stringstream(line);
 
@@ -138,7 +143,7 @@ vector <Charging_Node> getChargers(ifstream &inFile){
     stringstream check1;
     string intermediate;
     
-    for(x = 0, i = prog_params.nr + 1; x < i; x++){
+    for(x = 0, i = prog_params.num_of_recharge + 1; x < i; x++){
         getline(inFile, line);
         cout << line << endl;
         check1 = stringstream(line);

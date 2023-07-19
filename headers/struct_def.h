@@ -55,10 +55,15 @@ class Node{
     public:
         /** CONSTRUCTORS **/
         Node(){
-            this->coordinates = {0, 0};
+            this->name = -1;
+            this->coordinates = {-1, -1};
         }
         
         /** GETTERS **/
+        int getName(){
+            return this->name;
+        }
+
         location getCoordinates(){
             return this->coordinates;
         }
@@ -70,6 +75,7 @@ class Node{
             return this->coordinates.y;
         }
     protected:
+        int name;
         location coordinates;
 };
 
@@ -82,23 +88,29 @@ class Node{
 class Customer_Node : public Node{
     public:
         /** CONSTRUCTORS **/
-        Customer_Node(int x, int y, int demand, int service_time) { // Constructor with parameters
+        Customer_Node(int name, int x, int y, int demand, int service_time) { // Constructor with parameters
+            this->name = name;
             this->coordinates = {x, y};
             this->demand = demand;
             this->service_time = service_time;
         }
         Customer_Node(){
-            this->coordinates = {0, 0};
-            this->demand = 0;
-            this->service_time = 0;
+            this->name = -1;
+            this->coordinates = {-1, -1};
+            this->demand = -1;
+            this->service_time = -1;
         }
 
         /** DISPLAYERS **/
         void displayNode(){
-            cout << this->coordinates.x << ", " << this->coordinates.y << " " << this->demand << " " << this->service_time << endl;
+            cout << this->name << ", " << this->coordinates.x << ", " << this->coordinates.y << " " << this->demand << " " << this->service_time << endl;
         }
 
         /**GETTERS**/
+        int getName(){
+            return this->name;
+        }
+
         int getDemand(){
             return this->demand;
         }
@@ -123,28 +135,34 @@ typedef struct{
 class Charging_Node : public Node{
     public:
         /** CONSTRUCTORS **/
-        Charging_Node(int x, int y, int t0char, bool has1, bool has2, bool has3) { // Constructor with parameters
+        Charging_Node(int name, int x, int y, int t0char, bool has1, bool has2, bool has3) { // Constructor with parameters
+            this->name = name;
             this->coordinates = {x, y};
             this->t0char = t0char;
             this->tech = {has1, has2, has3};
         }
         Charging_Node() { // Constructor with parameters
-            this->coordinates = {0, 0};
-            this->t0char = 0;
-            this->tech = {0, 0, 0};
+            this->name = -1;
+            this->coordinates = {-1, -1};
+            this->t0char = -1;
+            this->tech = {false, false, false};
         }
 
         /** DISPLAYERS **/
         void displayNode(){
-            cout << this->coordinates.x << ", " << this->coordinates.y << " " << this->t0char << " {" << this->tech.hasTech1 << ", " << this->tech.hasTech2 << ", " << this->tech.hasTech3 << "}" << endl;
+            cout << this->name << ", " << this->coordinates.x << ", " << this->coordinates.y << " " << this->t0char << " {" << this->tech.hasTech1 << ", " << this->tech.hasTech2 << ", " << this->tech.hasTech3 << "}" << endl;
         }
 
         /**GETTERS**/
+        int getName(){
+            return this->name;
+        }
+
         int getT0Char(){
             return this->t0char;
         }
 
-        technologies getServiceTime(){
+        technologies getTech(){
             return this->tech;
         }
 

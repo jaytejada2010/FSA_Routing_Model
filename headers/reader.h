@@ -117,7 +117,7 @@ vector <Customer_Node> getCustomers(ifstream &inFile){
                 tokens.push_back(stoi(intermediate));
             }
         }
-        c.push_back(Customer_Node(tokens[1], tokens[2], tokens[3], tokens[4]));
+        c.push_back(Customer_Node(tokens[0], tokens[1], tokens[2], tokens[3], tokens[4]));
         tokens.clear();
     }
 
@@ -149,7 +149,7 @@ vector <Charging_Node> getChargers(ifstream &inFile){
                 tokens.push_back(stoi(intermediate));
             }
         }
-        r.push_back(Charging_Node(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6]));
+        r.push_back(Charging_Node(tokens[0], tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6]));
         tokens.clear();
     }
 

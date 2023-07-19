@@ -27,4 +27,5 @@ float convergence_criterion = 0.9; // to check the if all flamingos has passed t
 
 int main(){
     readFile("data/100/datos-10-N100.txt");
+    initializeDistanceMatrix();
 }

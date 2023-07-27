@@ -5,6 +5,7 @@
 #include <time.h>
 #include <bits/stdc++.h>
 #include <string>
+#include <set>
 
 using namespace std;
 
@@ -20,6 +21,19 @@ class Vehicle{
         int nodeIndx;  //index of node in its corresponding node type array
         char nodeType; //node type to which current node belongs to 
         int time;
+
+        /** CONSTRUCTORS **/
+        Vehicle(){
+            this->nodeIndx = -1;
+            this->nodeType = '\0';
+            this->time = -1;
+        }
+
+        Vehicle(int nodeIndx, char nodeType, int time){
+            this->nodeIndx = nodeIndx;
+            this->nodeType = nodeType;
+            this->time = time;
+        }
 };
 
 /**
@@ -30,8 +44,84 @@ class Vehicle{
 
 class Flamingo{
     public:
-        int cost;
-        vector<Vehicle> vehicleList;
+        double cost;
+        vector<vector<Vehicle>> vehicleList;  // multi-dimensional 
+        set<int> unvisitedCustomers; // set that holds the index of customers that are not yet visited
+        set<int> unvisitedRecharge; // set that holds the index of recharge stations that are not yet visited
+
+        /** CONSTRUCTORS **/
+        Flamingo(){
+            this->cost = -1;
+            this->vehicleList = vector<vector<Vehicle>>();
+        }
+
+        Flamingo(int size, int customers, int recharge){
+            this->cost = 0;
+            this->vehicleList = vector<vector<Vehicle>>(size);
+            setUnvisitedCustomers(customers);
+            setUnvisitedRecharge(recharge);
+        }
+
+        /** SETTERS **/
+        void setCost(double cost){
+            this->cost = cost;
+        }
+
+        void setUnvisitedCustomers(int customers){
+            for(int x = 0; x < customers; x++){
+                this->unvisitedCustomers.insert(x);
+            }
+        }
+
+        void setUnvisitedRecharge(int recharge){
+            for(int x = 0; x < recharge; x++){
+                this->unvisitedRecharge.insert(x);
+            }
+        }
+
+        /** OTHER OPERATIONS **/
+        void insertNodetoVehicle(int vehicle, Vehicle node){
+            if(vehicle >= 0 && vehicle < vehicleList.size()){
+                this->vehicleList[vehicle].push_back(node);
+            }else{
+                cout << "Invalid vehicle index at " << vehicle << endl;
+                exit(0);
+            }
+        }
+
+        void visitCustomer(int customer){
+            // visit a customer by removing them from the UNVISITED set
+            this->unvisitedCustomers.erase(customer);
+        }
+
+        void visitRecharge(int recharge){
+            // visit a recharge station by removing them from the UNVISITED set
+            this->unvisitedRecharge.erase(recharge);
+        }
+
+        int getCustomerFromSet(int index){
+            set<int>::iterator it = unvisitedCustomers.begin();
+            advance(it, index);
+
+            if(it != unvisitedCustomers.end()){
+                return *it;
+            }else{
+                cout << "Invalid customer index at " << index << endl;
+                exit(0);
+            }
+        }
+
+        int getRechargeFromSet(int index){
+            set<int>::iterator it = unvisitedRecharge.begin();
+            advance(it, index);
+
+            if(it != unvisitedRecharge.end()){
+                return *it;
+            }else{
+                cout << "Invalid recharge index at " << index << endl;
+                exit(0);
+            }
+        }
 };
 
 /**

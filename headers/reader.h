@@ -140,7 +140,7 @@ vector <Charging_Node> getChargers(ifstream &inFile){
     
     for(x = 0, i = prog_params.num_of_recharge + 1; x < i; x++){
         getline(inFile, line);
-        cout << line << endl;
+        // cout << line << endl;
         check1 = stringstream(line);
 
         // Tokenizing w.r.t. space ' '

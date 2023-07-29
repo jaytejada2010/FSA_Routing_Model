@@ -107,7 +107,7 @@ vector <Customer_Node> getCustomers(ifstream &inFile){
     stringstream check1;
     string intermediate;
     
-    for(x = 0; x < prog_params.nn; x++){
+    for(x = 0; x < prog_params.num_of_customers; x++){
         getline(inFile, line);
         check1 = stringstream(line);
 
@@ -138,9 +138,9 @@ vector <Charging_Node> getChargers(ifstream &inFile){
     stringstream check1;
     string intermediate;
     
-    for(x = 0, i = prog_params.nr + 1; x < i; x++){
+    for(x = 0, i = prog_params.num_of_recharge + 1; x < i; x++){
         getline(inFile, line);
-        cout << line << endl;
+        // cout << line << endl;
         check1 = stringstream(line);
 
         // Tokenizing w.r.t. space ' '

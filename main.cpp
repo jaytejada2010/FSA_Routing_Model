@@ -26,7 +26,14 @@ float convergence_criterion = 0.9; // to check the if all flamingos has passed t
 vector<Flamingo> f;
 int number_of_nodes = 0;
 
-
+/**
+ * @brief generate initial population of flamingo
+ * 
+ * customers are all visited atleast once
+ * recharge stations (except depot) are visited at most once
+ * 
+ * @return ** void 
+ */
 void populateFlamingo(){
     int flamingos = number_of_nodes;
 

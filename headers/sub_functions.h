@@ -13,16 +13,59 @@
 
 typedef double Matrix[CONSTANT_SIZE][CONSTANT_SIZE];
 
+/**
+ * @brief calculate the distance between node 1 and node 2
+ * 
+ * @param x1 x-coordinate of node 1
+ * @param y1 y-coordinate of node 1
+ * @param x2 x-coordinate of node 2
+ * @param y2 y-coordinate of node 2
+ * @return ** double distance expressed in kilometers(km)
+ */
 double calculateDistance(int x1, int y1, int x2, int y2){
     return pow(x2 - x1, 2) + pow(y2 - y1, 2); //using euclidean distance between 2 points
 }
 
+/**
+ * @brief calculate the energy consumed during the travel between 2 nodes
+ * 
+ * @param distance distance between 2 nodes expressed in kilometers(km)
+ * @return ** double energy consumed experessed in KWh
+ */
 double calculateEnergyConsumed(double distance){
     return distance / prog_params.energy_consumption;
 }
 
+/**
+ * @brief calculate the time spent during the travel between 2 nodes
+ * 
+ * @param distance distance between 2 nodes expressed in kilometers(km)
+ * @return ** double time spent expressed in hours
+ */
 double calculateTimeSpent(double distance){
     return distance / prog_params.velocity;
+}
+
+/**
+ * @brief calculate the time to recharge
+ * 
+ * @param speed speed of chosen technology expressed in KWh/h
+ * @param energy_refill total energy refill of sub-trip expressed in KWh
+ * @return ** double total time it takes to charge expressed in hours
+ */
+double calculateTimeRecharge(int speed, double energy_refill){
+    return energy_refill / speed;
+}
+
+/**
+ * @brief calculate the cost to recharge
+ * 
+ * @param cost cost of chosen technology expressed in Euro
+ * @param energy_refill total energy refill of sub-trip expressed in KWh
+ * @return ** double total cost it takes to charge expressed in Euro
+ */
+double calculateEnergyCost(double cost, double energy_refill){
+    return energy_refill * cost;
 }
 
 Matrix *initializeDistanceMatrix(){
@@ -85,6 +128,13 @@ Matrix *initializeDistanceMatrix(){
     return distance;
 }
 
+/**
+ * @brief generate a random number given a range inclusive
+ * 
+ * @param start 
+ * @param end 
+ * @return ** int 
+ */
 int random(int start, int end){
     static random_device rd;
     static mt19937 gen(rd());

@@ -7,7 +7,7 @@
  * GENERAL FLOW OF THE PROGRAM
  * 1 => Preprocess the data into the program and store into their                                  [done]
  *      respective data structures
- * 2 => Populate Flamingo population by generating initial feasible solutions                      [working on it]
+ * 2 => Populate Flamingo population                                                               [done]
  * 3 => Calculate cost of each flamingo                                                            [not yet started]
  * 4 => Assign a leader flamingo with the least cost                                               [not yet started]
  * 5 => Divide the flamingos into migrating and foragin flamingos based on group ratio             [not yet started]

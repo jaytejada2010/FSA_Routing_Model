@@ -277,9 +277,9 @@ class Charging_Node : public Node{
 class Technology{
     public:
         /** CONSTRUCTORS **/
-        Technology(int speed, float cost){
-            this->speed = speed;
-            this->cost = cost;
+        Technology(int speed, double cost){
+            this->speed = speed;     // KWH/hour
+            this->cost = cost;       // Euro/KWH
         }
         Technology(){
             this->speed = 0;
@@ -296,13 +296,13 @@ class Technology{
             return this->speed;
         }
 
-        float getCost(){
+        double getCost(){
             return this->cost;
         }
 
     private:
         int speed;
-        float cost;
+        double cost;
 };
 
 typedef struct{

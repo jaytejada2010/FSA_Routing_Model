@@ -59,6 +59,17 @@ double calculateTimeRecharge(int speed, double energy_refill){
 }
 
 /**
+ * @brief calculate the energy to refill based on the speed of the technology and time 
+ * 
+ * @param speed speed of the technology expressed in Kw
+ * @param time time to refill expressed in minutes
+ * @return ** double energy refill expressed in KWh
+ */
+double calculateEnergyRefill(int speed, double time){
+    return (speed * time) / 60;
+}
+
+/**
  * @brief calculate the cost to recharge
  * 
  * @param cost cost of chosen technology expressed in Euro

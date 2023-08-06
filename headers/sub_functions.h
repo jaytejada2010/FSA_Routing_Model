@@ -23,7 +23,8 @@ typedef double Matrix[CONSTANT_SIZE][CONSTANT_SIZE];
  * @return ** double distance expressed in kilometers(km)
  */
 double calculateDistance(int x1, int y1, int x2, int y2){
-    return pow(x2 - x1, 2) + pow(y2 - y1, 2); //using euclidean distance between 2 points
+    return (pow(x2 - x1, 2) + pow(y2 - y1, 2)) / 1000; //using euclidean distance between 2 points
+    // division of 1000 is to convert m => km
 }
 
 /**
@@ -40,10 +41,10 @@ double calculateEnergyConsumed(double distance){
  * @brief calculate the time spent during the travel between 2 nodes
  * 
  * @param distance distance between 2 nodes expressed in kilometers(km)
- * @return ** double time spent expressed in hours
+ * @return ** double time spent expressed in minutes
  */
 double calculateTimeSpent(double distance){
-    return distance / prog_params.velocity;
+    return (distance / prog_params.velocity) * 60; // convert to minutes
 }
 
 /**
@@ -51,10 +52,10 @@ double calculateTimeSpent(double distance){
  * 
  * @param speed speed of chosen technology expressed in KWh/h
  * @param energy_refill total energy refill of sub-trip expressed in KWh
- * @return ** double total time it takes to charge expressed in hours
+ * @return ** double total time it takes to charge expressed in minutes
  */
 double calculateTimeRecharge(int speed, double energy_refill){
-    return energy_refill / speed;
+    return (energy_refill / speed) * 60; // convert to minutes
 }
 
 /**
@@ -66,6 +67,28 @@ double calculateTimeRecharge(int speed, double energy_refill){
  */
 double calculateEnergyCost(double cost, double energy_refill){
     return energy_refill * cost;
+}
+
+/**
+ * @brief Get the name attritbute
+ * 
+ * @param node Vehicle node
+ * @return ** int 
+ */
+int getName(Vehicle node){
+    int name = -1;
+
+    switch (node.nodeType){
+        case 'C':
+            name = c_nodes[node.nodeIndx].getName();
+            break;
+        case 'R' : 
+            name = r_nodes[node.nodeIndx].getName();
+            break;
+        default:
+            break;
+    }
+    return name;
 }
 
 Matrix *initializeDistanceMatrix(){

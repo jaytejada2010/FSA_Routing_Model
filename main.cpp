@@ -156,19 +156,25 @@ void populateFlamingo(){
 
                 fl.visitCustomer(nodeIndx);
             }else if(nodeType == 'R'){
-                // insert a recharge station but not the depot
-                node = random(1, fl.unvisitedRecharge.size() - 1);
-                nodeIndx = fl.getRechargeFromSet(node);
+                // make sure no charging stations are consecutive of each other
+                if(fl.vehicleList[vehicle][fl.vehicleList[vehicle].size() - 1].nodeType == 'C'){
+                    // insert a recharge station but not the depot
+                    node = random(1, fl.unvisitedRecharge.size() - 1);
+                    nodeIndx = fl.getRechargeFromSet(node);
 
-                fl.visitRecharge(nodeIndx);
+                    fl.visitRecharge(nodeIndx);
+                }
             }else {
                 cout << "Invalid node type at " << nodeType << endl;
                 exit(0);
             }
 
-            Vehicle v(nodeIndx, nodeType, time);
-            // insert node to the vehicle
-            fl.insertNodetoVehicle(vehicle, v);
+            // insert only if the node is valid
+            if (nodeIndx != -1){
+                Vehicle v(nodeIndx, nodeType, time);
+                // insert node to the vehicle
+                fl.insertNodetoVehicle(vehicle, v);
+            }
         }
 
         for(int vehicle = 0; vehicle < vehicles; vehicle++){

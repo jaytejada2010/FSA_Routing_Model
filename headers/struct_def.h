@@ -230,12 +230,21 @@ class Charging_Node : public Node{
             this->coordinates = {x, y};
             this->t0char = t0char;
             this->tech = {has1, has2, has3};
+
+            if(has1){
+                setChosenTech(0);
+            }else if(has2){
+                setChosenTech(1);
+            }else if(has3){
+                setChosenTech(2);
+            }
         }
         Charging_Node() { // Constructor with parameters
             this->name = -1;
             this->coordinates = {-1, -1};
             this->t0char = -1;
             this->tech = {false, false, false};
+            setChosenTech(-1);
         }
 
         /** DISPLAYERS **/
@@ -268,9 +277,19 @@ class Charging_Node : public Node{
             return this->tech.hasTech3;
         }
 
+        int getChosenTech(){
+            return this->chosen_tech;
+        }
+
+        /**SETTERS**/
+        void setChosenTech(int chosen_tech){
+            this->chosen_tech = chosen_tech;
+        }
+
     private:
         //id will be the index of node in the c_node_array
         int t0char;
+        int chosen_tech;
         technologies tech;
 };
 

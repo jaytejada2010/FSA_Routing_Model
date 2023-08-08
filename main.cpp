@@ -26,6 +26,92 @@ float convergence_criterion = 0.9; // to check the if all flamingos has passed t
 vector<Flamingo> f;
 int number_of_nodes = 0;
 
+Matrix* distance_matrix = NULL;
+
+/**
+ * @brief check feasibility of each vehicle route
+ * 
+ * @param v vehicle list
+ * @return true if feasible
+ * @return false if not feasible
+ */
+bool checkFesaibilityVehicle(vector<Vehicle> v){
+    bool checkFeasibility = true;
+    double total_distance = 0;
+    double total_time = 0, travel_time = 0, service_time = 0, refill_time = 0;
+    double total_energy = 0, total_energy_subtrip = 0;
+    double total_demand = 0;
+    cout << "\t size: " << v.size();
+    // first node => first node of the current sub-trip
+    for(int first_node = 0; first_node < v.size() - 1 && checkFeasibility;){
+        cout << endl << "\tfirst node: " << first_node;
+        total_energy_subtrip = 0;
+        // second node => current node, it will stop if it will encounter another charging station (end of sub trip)
+        for(int second_node = first_node + 1; second_node < v.size() && checkFeasibility; second_node++){
+            cout << endl << "\t\tsecond node: " << second_node << " " << v[second_node].nodeType;
+            // reset time variables for each node
+            travel_time = service_time = refill_time = 0;
+
+            double distance = (*distance_matrix)[getName(v[first_node])][getName(v[second_node])];
+            double energy_consumption = calculateEnergyConsumed(distance); //accumulate energy consumption for the sub-trip
+
+            total_distance += distance;
+            travel_time = calculateTimeSpent(distance);
+            total_energy_subtrip += energy_consumption;
+
+            cout << endl << "\t\t\tdistance " << distance << " \tenergy " << energy_consumption;
+
+            if(v[second_node].nodeType == 'R'){
+                // evaluate energy of subtrip only if the end of the subtrip is found (another charging station)
+                if(total_energy_subtrip > prog_params.battery_max){
+                    cout << endl << "exceed batt" << endl;
+                    checkFeasibility = false;
+                    break;
+                }
+
+                // calculate time to refill the needed 
+                int chosen_speed = tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getSpeed();
+                v[first_node].time = refill_time = calculateTimeRecharge(chosen_speed, total_energy_subtrip);
+                first_node = second_node;
+                cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time;
+                break;
+            }else if(v[second_node].nodeType == 'C'){
+                // get the demand of the customer and their service time
+                total_demand = c_nodes[v[second_node].nodeIndx].getDemand();
+                v[second_node].time = service_time = c_nodes[v[second_node].nodeIndx].getServiceTime();
+            }
+            cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time;
+            total_time += travel_time + service_time + refill_time;
+        }
+    }
+
+    if(total_demand > prog_params.vehicle_capacity || total_time > prog_params.time_max)
+        checkFeasibility = false;
+    cout << endl << "\ttotal demand: " << total_demand << "("<<prog_params.vehicle_capacity<<")" << "\ttotal time: " << total_time << "("<<prog_params.time_max<<")";
+    return checkFeasibility;
+}
+
+/**
+ * @brief check feasibilty of the flamingo population
+ * 
+ * @return true if feasible
+ * @return false if not feasible
+ */
+bool checkFeasibilityFlamingo(){
+    bool checkFeasibility = true;
+    cout << f.size();
+    // check the feasibility of each flamingo
+    for(int flamingo = 0; flamingo < f.size() && checkFeasibility; flamingo++){
+        cout << endl << "Flamingo: " << flamingo;
+        // evaluate each vehicle in the vehicle list of the flamingo
+        for(int vehicle = 0; vehicle < f[flamingo].vehicleList.size() && checkFeasibility; vehicle++){
+            cout << endl << "Vehicle: " << vehicle;
+            checkFeasibility = checkFesaibilityVehicle(f[flamingo].vehicleList[vehicle]);
+        }
+    }
+    return checkFeasibility;
+}
+
 /**
  * @brief generate initial population of flamingo
  * 
@@ -54,7 +140,7 @@ void populateFlamingo(){
 
             char nodeType = 'C';
             int nodeIndx = -1;
-            int time = 0; // not sure what time is yet
+            int time = 0;
 
             int node = -1;
 
@@ -97,10 +183,14 @@ void populateFlamingo(){
 
 int main(){
     readFile("data/100/datos-10-N100.txt");
-    initializeDistanceMatrix(); //create a distance matrix beforehand
+    
+    distance_matrix = initializeDistanceMatrix(); //create a distance matrix beforehand
 
     number_of_nodes = prog_params.num_of_customers + prog_params.num_of_recharge + 1;
 
     populateFlamingo();
     displayFlamingoPopulation(f, "flamingo_population.txt");
+
+    bool check = checkFeasibilityFlamingo();
+    cout << endl << "check is " << check;
 }

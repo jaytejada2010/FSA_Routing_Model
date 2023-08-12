@@ -307,7 +307,7 @@ class Technology{
 
         /** DISPLAYER **/
         void displayTech(){
-            cout << this->speed << " " << this->cost << endl;
+            cout << endl << this->speed << " " << this->cost << endl;
         }
 
         /** GETTERS **/
@@ -333,7 +333,7 @@ typedef struct{
     int num_of_customers; // number of customers
     int num_of_vehicles; // number of vehicles available
     int num_of_recharge; // number of recharge stations (excluding depot)
-    int ntr; //
+    int num_of_tech; //  number of technologies (0 - 2) => 3 available tech
     int velocity; // velocity or average speed 25km/h
     int battery_max; // battery capacity 20KWh
     int energy_consumption; //energy consumption 0.125 KWh/km

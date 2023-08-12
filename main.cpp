@@ -1,4 +1,5 @@
-#include "headers/sub_functions.h"
+#include "headers/foraging.h"
+#include <iomanip>
 
 /**
  * THIS IS A PROGRAM THAT AIMS TO SOLVE THE GREEN VEHICLE ROUTING PROBLEM
@@ -59,7 +60,7 @@ bool checkFesaibilityVehicle(vector<Vehicle> v){
             travel_time = calculateTimeSpent(distance);
             total_energy_subtrip += energy_consumption;
 
-            cout << endl << "\t\t\tdistance " << distance << " \tenergy " << energy_consumption;
+            // cout << endl << "\t\t\tdistance " << distance << " \tenergy " << energy_consumption;
 
             if(v[second_node].nodeType == 'R'){
                 // evaluate energy of subtrip only if the end of the subtrip is found (another charging station)
@@ -70,23 +71,29 @@ bool checkFesaibilityVehicle(vector<Vehicle> v){
                 }
 
                 // calculate time to refill the needed 
+                cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time << "\tchosen tech: " << r_nodes[v[first_node].nodeIndx].getChosenTech() << "\tname: " << r_nodes[v[first_node].nodeIndx].getName() << "\tspeed: " << tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getSpeed();
                 int chosen_speed = tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getSpeed();
                 v[first_node].time = refill_time = calculateTimeRecharge(chosen_speed, total_energy_subtrip);
                 first_node = second_node;
-                cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time;
+                total_time += travel_time + refill_time;
+                cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time << "\tchosen tech: " << r_nodes[v[first_node].nodeIndx].getChosenTech() << "\tname: " << r_nodes[v[first_node].nodeIndx].getName() << "\tspeed: " << tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getSpeed();
+                cout << endl << "total time: " << total_time;
                 break;
             }else if(v[second_node].nodeType == 'C'){
                 // get the demand of the customer and their service time
                 total_demand = c_nodes[v[second_node].nodeIndx].getDemand();
                 v[second_node].time = service_time = c_nodes[v[second_node].nodeIndx].getServiceTime();
+                total_time += travel_time + service_time;
+                cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time;
+                cout << endl << "total time: " << total_time;
             }
-            cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time;
-            total_time += travel_time + service_time + refill_time;
         }
     }
 
     if(total_demand > prog_params.vehicle_capacity || total_time > prog_params.time_max)
         checkFeasibility = false;
+
+    
     cout << endl << "\ttotal demand: " << total_demand << "("<<prog_params.vehicle_capacity<<")" << "\ttotal time: " << total_time << "("<<prog_params.time_max<<")";
     return checkFeasibility;
 }
@@ -189,14 +196,14 @@ void populateFlamingo(){
 
 int main(){
     readFile("data/100/datos-10-N100.txt");
-    
+    cout << fixed << setprecision(9);
     distance_matrix = initializeDistanceMatrix(); //create a distance matrix beforehand
 
     number_of_nodes = prog_params.num_of_customers + prog_params.num_of_recharge + 1;
 
     populateFlamingo();
     displayFlamingoPopulation(f, "flamingo_population.txt");
-
+    
     bool check = checkFeasibilityFlamingo();
     cout << endl << "check is " << check;
 }

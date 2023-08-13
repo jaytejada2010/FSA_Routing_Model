@@ -55,6 +55,7 @@ double calculateTimeSpent(double distance){
  * @return ** double total time it takes to charge expressed in minutes
  */
 double calculateTimeRecharge(int speed, double energy_refill){
+    cout << endl << "calculate speed: " << speed << " energy: " << energy_refill << " answer: " << (energy_refill / speed) * 60 << endl;
     return (energy_refill / speed) * 60; // convert to minutes
 }
 
@@ -101,6 +102,21 @@ int getName(Vehicle node){
     }
     return name;
 }
+
+/**
+ * @brief Set the Next Available Tech of the Recharge Station
+ * 
+ * @param station Recharge Station Node
+ * @return ** void 
+ */
+void setNextAvailableTech(Charging_Node *station){
+    int chosen_tech = (*station).getChosenTech();
+    // cout << endl << (*station).getName() << "\told tech: " << chosen_tech;
+    if(chosen_tech == 1 && (*station).has3()){
+        (*station).setChosenTech(chosen_tech + 1);
+        // cout << "\t new tech: " << (*station).getChosenTech();
+    }
+} 
 
 Matrix *initializeDistanceMatrix(){
     Matrix *distance = (Matrix*)calloc(1, sizeof(Matrix)); //storage allocation is in heap

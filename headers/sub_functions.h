@@ -111,10 +111,10 @@ int getName(Vehicle node){
  */
 void setNextAvailableTech(Charging_Node *station){
     int chosen_tech = (*station).getChosenTech();
-    cout << endl << (*station).getName() << "\told tech: " << chosen_tech;
+    // cout << endl << (*station).getName() << "\told tech: " << chosen_tech;
     if(chosen_tech == 1 && (*station).has3()){
         (*station).setChosenTech(chosen_tech + 1);
-        cout << "\t new tech: " << (*station).getChosenTech();
+        // cout << "\t new tech: " << (*station).getChosenTech();
     }
 } 
 

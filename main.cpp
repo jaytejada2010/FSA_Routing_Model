@@ -204,6 +204,11 @@ int main(){
     populateFlamingo();
     displayFlamingoPopulation(f, "flamingo_population.txt");
     
+    for(int flamingo = 0; flamingo < f.size(); flamingo++){
+        cout << endl << "Flamingo " << flamingo;
+        balanceVehicleRoutes(&f[flamingo]);
+    }
+cout << "\ndone";
     bool check = checkFeasibilityFlamingo();
     cout << endl << "check is " << check;
 }

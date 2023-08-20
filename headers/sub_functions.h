@@ -193,6 +193,18 @@ int random(int start, int end){
     return dis(gen);
 }
 
+/**
+ * @brief Get the difference betweeen the shortest and longest route to balance
+ * 
+ * @param shortest size of the shortest route 
+ * @param longest size of the longest route
+ * @return ** int difference in size to balance
+ */
+int getDifferenceInSize(int shortest, int longest){
+    float average = (longest + shortest) / 2.0;
+    return longest - ceil(average);
+}
+
 Vehicle getDepot(){
     Vehicle depot(0, 'R', 0);
 

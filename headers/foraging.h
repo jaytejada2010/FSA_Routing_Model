@@ -69,3 +69,46 @@ void balanceVehicleRoutes(Flamingo *fl){
         }
     }
 }
+
+void balanceChargingStations(Flamingo *fl){
+    for(int vehicle = 0; vehicle < (*fl).vehicleList.size(); vehicle++){
+        // initialize starting and end points of the shortest and longest sub-trip
+        int short_start = 0, short_end = (*fl).vehicleList[vehicle].size() - 1; 
+        int long_start = 0, long_end = 0;
+
+        // find the longest and shortest sub-trip
+        for(int first = 0; first < (*fl).vehicleList[vehicle].size() - 1; ){
+            int second;
+            // find the end of the subtrip
+            for(second = first + 1; (*fl).vehicleList[vehicle][second].nodeType != 'R'; second++){}
+            // find the shortest sub-trip
+            if(short_end - short_start > second - first){
+                short_start = first;
+                short_end = second;
+            }
+            // find the longest sub-trip
+            if(long_end - long_start < second - first){
+                long_start = first;
+                long_end = second;
+            }
+            first = second;
+        }
+
+        int ndxToMove;
+        if (short_start == 0 && short_end == (*fl).vehicleList[vehicle].size() - 1){
+            ndxToMove = -1; // if the route has no charging station in the middle
+        }else if (short_start != 0 && short_end == (*fl).vehicleList[vehicle].size() - 1){
+            ndxToMove = short_start; // if the ending node is the end of the route
+        } else {
+            ndxToMove = short_end; // the default
+        }
+
+        if(ndxToMove != -1){
+            // move the node in the middle of the longest route
+            Vehicle node = (*fl).vehicleList[vehicle][ndxToMove];
+            int ndxToInsert = ceil((long_end + long_start) / 2); // find the middle index of the longest route
+            (*fl).vehicleList[vehicle].insert((*fl).vehicleList[vehicle].begin() + ndxToInsert, node);
+            (*fl).vehicleList[vehicle].erase((*fl).vehicleList[vehicle].begin() + ndxToMove);
+        }
+    }
+}

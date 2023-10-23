@@ -9,7 +9,7 @@
  * 1 => Preprocess the data into the program and store into their                                  [done]
  *      respective data structures
  * 2 => Populate Flamingo population                                                               [done]
- * 3 => Calculate cost of each flamingo                                                            [not yet started]
+ * 3 => Calculate cost of each flamingo                                                            [done]
  * 4 => Assign a leader flamingo with the least cost                                               [not yet started]
  * 5 => Divide the flamingos into migrating and foragin flamingos based on group ratio             [not yet started]
  * 6.1 => Update migrating flamingos                                                               [not yet started]
@@ -203,12 +203,15 @@ int main(){
 
     populateFlamingo();
     displayFlamingoPopulation(f, "flamingo_population.txt");
-    
+
+    bool check = checkFeasibilityFlamingo();
+    cout << endl << "check is " << check;
+    cout << endl << endl << endl;
     for(int flamingo = 0; flamingo < f.size(); flamingo++){
         cout << endl << "Flamingo " << flamingo;
-        balanceVehicleRoutes(&f[flamingo]);
+        balanceChargingStations(&f[flamingo]);
     }
 cout << "\ndone";
-    bool check = checkFeasibilityFlamingo();
+     check = checkFeasibilityFlamingo();
     cout << endl << "check is " << check;
 }

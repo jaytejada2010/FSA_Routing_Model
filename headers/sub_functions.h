@@ -1,4 +1,3 @@
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <stdlib.h>
@@ -186,11 +185,8 @@ Matrix *initializeDistanceMatrix(){
  * @return ** int 
  */
 int random(int start, int end){
-    static random_device rd;
-    static mt19937 gen(rd());
-    uniform_int_distribution<int> dis(start, end);
-
-    return dis(gen);
+    // Generate a random number between start and end (inclusive)
+    return rand() % (end - start + 1) + start;
 }
 
 /**

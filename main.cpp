@@ -29,6 +29,8 @@ int number_of_nodes = 0;
 
 Matrix* distance_matrix = NULL;
 
+
+
 /**
  * @brief check feasibility of each vehicle route
  * 
@@ -195,23 +197,21 @@ void populateFlamingo(){
 }
 
 int main(){
-    readFile("data/100/datos-10-N100.txt");
-    cout << fixed << setprecision(9);
-    distance_matrix = initializeDistanceMatrix(); //create a distance matrix beforehand
+    // Seed the random number generator with the current time
+    srand(static_cast<unsigned int>(time(0)));
 
-    number_of_nodes = prog_params.num_of_customers + prog_params.num_of_recharge + 1;
+    // readFile("data/100/datos-10-N100.txt");
+    // cout << fixed << setprecision(9);
+    // distance_matrix = initializeDistanceMatrix(); //create a distance matrix beforehand
 
-    populateFlamingo();
-    displayFlamingoPopulation(f, "flamingo_population.txt");
+    // number_of_nodes = prog_params.num_of_customers + prog_params.num_of_recharge + 1;
 
-    bool check = checkFeasibilityFlamingo();
-    cout << endl << "check is " << check;
-    cout << endl << endl << endl;
-    for(int flamingo = 0; flamingo < f.size(); flamingo++){
-        cout << endl << "Flamingo " << flamingo;
-        balanceChargingStations(&f[flamingo]);
-    }
-cout << "\ndone";
-     check = checkFeasibilityFlamingo();
-    cout << endl << "check is " << check;
+    // populateFlamingo();
+    // displayFlamingoPopulation(f, "flamingo_population.txt");
+
+    // bool check = checkFeasibilityFlamingo();
+    // cout << endl << "check is " << check;
+
+
+    return 0;
 }

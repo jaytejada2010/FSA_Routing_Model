@@ -169,6 +169,13 @@ class Operators{
     void setScore(int index, int score){
         this->scores[index] += score;
     }
+
+    // OTHER FUNCTIONS
+    void displayScores(){
+        for(int x = 0; x < scores.size(); x++){
+            cout << endl << "Operator " << x << ": " << scores[x];
+        }
+    }
 };
 
 /**

@@ -132,7 +132,13 @@ void balanceChargingStations(Flamingo *fl){
     }
 }
 
-void callForagingOperator(Flamingo *fl){
+/**
+ * @brief call a foraging operator
+ * 
+ * @param fl 
+ * @return ** int index of the operator chosen
+ */
+int callForagingOperator(Flamingo *fl){
     int op = foraging.getRandomOperator();
     
     switch (op) {
@@ -149,4 +155,6 @@ void callForagingOperator(Flamingo *fl){
         cout << "\nInvalid foraging operator";
         break;
     }
+
+    return op;
 }

@@ -1,8 +1,6 @@
 #include "sub_functions.h"
 #include "struct_def.h"
 
-void migrateFlamingo(Flamingo *curr, Flamingo best);
-
 /**
  * @brief Migratory Operator
  * the migrating flamingo is compared with the leader flamingo and
@@ -14,6 +12,9 @@ void migrateFlamingo(Flamingo *curr, Flamingo best);
 
 void migrateFlamingo(Flamingo *curr, Flamingo best)
 {
+    int *difference;
+    getDifferenceArray(*curr, best, difference);
+
     // get how many vehicles for this flamingo randomly
     int vehicles = ceil(((*curr).vehicleList.size() + best.vehicleList.size()) / 2);
 
@@ -97,7 +98,7 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
  * @return ** void
  */
 
-void getDifferenceArray(Flamingo curr, Flamingo best, int something)
+void getDifferenceArray(Flamingo curr, Flamingo best, int *something)
 {
     // creating the difference array
     int difference[100] = {0};

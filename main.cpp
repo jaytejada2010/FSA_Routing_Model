@@ -1,6 +1,12 @@
 #include "headers/foraging.h"
 #include <iomanip>
 
+
+// Scores
+#define GOLD 5
+#define SILVER 3
+#define BRONZE 1
+
 /**
  * THIS IS A PROGRAM THAT AIMS TO SOLVE THE GREEN VEHICLE ROUTING PROBLEM
  * USING THE FLAMINGO SEARCH ALGORITHM
@@ -21,7 +27,7 @@
  */
 
 // global parameters
-int group_ratio = 2; // ratio when diving flamingos into migrating and foraging
+double group_ratio = 0.8; // ratio when diving flamingos into migrating and foraging
 float convergence_criterion = 0.9; // to check the if all flamingos has passed the optimal solution
 
 vector<Flamingo> f;
@@ -38,7 +44,7 @@ Matrix* distance_matrix = NULL;
  * @return true if feasible
  * @return false if not feasible
  */
-bool checkFesaibilityVehicle(vector<Vehicle> v){
+bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost){
     bool checkFeasibility = true;
     double total_distance = 0;
     double total_time = 0, travel_time = 0, service_time = 0, refill_time = 0;
@@ -80,6 +86,11 @@ bool checkFesaibilityVehicle(vector<Vehicle> v){
                 total_time += travel_time + refill_time;
                 cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time << "\tchosen tech: " << r_nodes[v[first_node].nodeIndx].getChosenTech() << "\tname: " << r_nodes[v[first_node].nodeIndx].getName() << "\tspeed: " << tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getSpeed();
                 cout << endl << "total time: " << total_time;
+
+                // calculate the cost of the refill
+                double chosen_cost = tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getCost();
+                (*cost)  += calculateEnergyCost(chosen_cost, total_energy_subtrip);
+
                 break;
             }else if(v[second_node].nodeType == 'C'){
                 // get the demand of the customer and their service time
@@ -100,6 +111,31 @@ bool checkFesaibilityVehicle(vector<Vehicle> v){
     return checkFeasibility;
 }
 
+
+/**
+ * @brief check feasibilty of the given flamingo
+ * 
+ * @return true if feasible
+ * @return false if not feasible
+ */
+bool checkFeasibilityEachFlamingo(Flamingo *fl){
+    bool checkFeasibility = true;
+    double cost = 0;
+    cout << " size " << f.size();
+    // check the feasibility of each flamingo
+    for(int vehicle = 0; vehicle < (*fl).vehicleList.size() && checkFeasibility; vehicle++){
+        cout << endl << "Vehicle: " << vehicle;
+        checkFeasibility = checkFesaibilityVehicle((*fl).vehicleList[vehicle], &cost);
+    }
+
+    // update cost
+    (*fl).cost = cost;
+    cout << endl << "total cost " << (*fl).cost << endl;
+
+    return checkFeasibility;
+}
+
+
 /**
  * @brief check feasibilty of the flamingo population
  * 
@@ -112,11 +148,7 @@ bool checkFeasibilityFlamingo(){
     // check the feasibility of each flamingo
     for(int flamingo = 0; flamingo < f.size() && checkFeasibility; flamingo++){
         cout << endl << "Flamingo: " << flamingo;
-        // evaluate each vehicle in the vehicle list of the flamingo
-        for(int vehicle = 0; vehicle < f[flamingo].vehicleList.size() && checkFeasibility; vehicle++){
-            cout << endl << "Vehicle: " << vehicle;
-            checkFeasibility = checkFesaibilityVehicle(f[flamingo].vehicleList[vehicle]);
-        }
+        checkFeasibilityEachFlamingo(&f[flamingo]);
     }
     return checkFeasibility;
 }
@@ -196,22 +228,87 @@ void populateFlamingo(){
     }
 }
 
+void flamingoSearchAlgorithm(vector<Flamingo> f){
+    // divide the flamingo into 2 groups
+    int middle = ceil(f.size() * group_ratio);
+cout << endl << "middle " << middle;
+    // foraging group
+    int f_start = 0, f_end = middle;
+cout << endl << "foraging: " << f_start << " " << f_end;
+    // migrating group
+    int m_start = middle, m_end = f.size();
+cout << endl << "migrating: " << m_start << " " << m_end;
+    // update foraging group
+    for(int x = f_start; x < 5; x++){
+        bool feasibility = false;
+        int op = 0;
+        double current_cost = f[x].cost;
+        Flamingo temp;       // temporary flamingo, only change the current flamingo if it is feasible
+        
+cout << endl << " Foraging: " << x;
+int count = 0;
+        // pick a random operator and update
+        // if not feasible, update again until it becomes feasible
+        while (!feasibility){
+            // the temporary flamingo will always start at the current flamingo
+            // if it is not feasible, it will go back to the current flamingo
+            // ex.
+            // current: 0 3 4 2 0 6 5 0
+            // temp after the update: 0 3 4 0 2 6 5 0 (it will not update from here, if this is not feasible)
+            // the temp is not feasible
+            // temp will go back to: 0 3 4 2 0 6 5 0 and update again
+            temp = f[x];
+            op = callForagingOperator(&temp);
+    
+cout << endl << "count " << count++;
+            // check feasibilty, calculating the cost is inside the checkFeasibilityEachFlamingo()
+            feasibility = checkFeasibilityEachFlamingo(&temp);
+        }
+        // update current flamingo
+        f[x] = temp;
+
+        cout << endl << "feasiblity " << feasibility;
+        int score = BRONZE;
+        // evaluate and score the operator
+        if(f[0].cost < f[x].cost){
+            score = GOLD;                        // if the new cost is better than the leader flamingo
+        }else if(current_cost < f[x].cost){
+            score = SILVER;                      // if the new cost is better than the current flamingo
+        }
+cout << endl << "score " << score;
+        // update score of flamingo operator
+        foraging.setScore(op, score);
+        foraging.displayScores();
+    }
+
+    // update migrating group
+    for(int x = m_start; x < m_end; x++){
+
+    }
+}
+
 int main(){
     // Seed the random number generator with the current time
     srand(static_cast<unsigned int>(time(0)));
 
-    // readFile("data/100/datos-10-N100.txt");
-    // cout << fixed << setprecision(9);
-    // distance_matrix = initializeDistanceMatrix(); //create a distance matrix beforehand
+    readFile("data/100/datos-10-N100.txt");
+    cout << fixed << setprecision(9);
+    distance_matrix = initializeDistanceMatrix(); //create a distance matrix beforehand
 
-    // number_of_nodes = prog_params.num_of_customers + prog_params.num_of_recharge + 1;
+    number_of_nodes = prog_params.num_of_customers + prog_params.num_of_recharge + 1;
 
-    // populateFlamingo();
-    // displayFlamingoPopulation(f, "flamingo_population.txt");
+    populateFlamingo();
+    flamingoSearchAlgorithm(f);
+//     displayFlamingoPopulation(f, "flamingo_population.txt");
 
-    // bool check = checkFeasibilityFlamingo();
-    // cout << endl << "check is " << check;
-
-
-    return 0;
+//     bool check = checkFeasibilityFlamingo();
+//     cout << endl << "check is " << check;
+//     cout << endl << endl << endl;
+//     for(int flamingo = 0; flamingo < f.size(); flamingo++){
+//         cout << endl << "Flamingo " << flamingo;
+//         balanceChargingStations(&f[flamingo]);
+//     }
+// cout << "\ndone";
+//      check = checkFeasibilityFlamingo();
+//     cout << endl << "check is " << check;
 }

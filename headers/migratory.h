@@ -12,8 +12,7 @@
 
 void migrateFlamingo(Flamingo *curr, Flamingo best)
 {
-    int *difference;
-    getDifferenceArray(*curr, best, difference);
+    set<int> difference = getDifferenceSet(*curr, best);
 
     // get how many vehicles for this flamingo randomly
     int vehicles = ceil(((*curr).vehicleList.size() + best.vehicleList.size()) / 2);
@@ -98,30 +97,61 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
  * @return ** void
  */
 
-void getDifferenceArray(Flamingo curr, Flamingo best, int *something)
+set<int> getDifferenceSet(Flamingo curr, Flamingo best)
 {
-    // creating the difference array
-    int difference[100] = {0};
+    // creating the difference set
+    set<int> difference;
 
-    // setting value of difference array as -1
-    for (int i = 0; i < sizeof(difference); i++)
-    {
-        // elements with value -1 need not change
-        difference[i] = -1;
-    }
+    // filling difference set with node differences
+    // iterate through the vehicles of the flamingos
 
-    // filling differenceArray with node differences
-    for (int vehicle = 0; vehicle < curr.vehicleList.size(); vehicle++)
+    int vehicle = 0;
+
+    for (; vehicle < min(curr.vehicleList.size(), best.vehicleList.size()); vehicle++)
     {
-        for (int node = 0; node < max(curr.vehicleList[vehicle].size(), best.vehicleList[vehicle].size()); node++)
+        // get length of shorter and longer vehicle lengths
+        int shorterVehicleLength = min(curr.vehicleList[vehicle].size(), best.vehicleList[vehicle].size());
+        int longerVehicleLength = max(curr.vehicleList[vehicle].size(), best.vehicleList[vehicle].size());
+        
+        int node = 0;
+
+        // iterate through the nodes of the vehicles up to shorter vehicle length
+        for (; node < shorterVehicleLength; node++)
         {
+            // check if any if the nodes are the different
             if (curr.vehicleList[vehicle][node].nodeIndx != best.vehicleList[vehicle][node].nodeIndx)
             {
-                int differenceIndex1 = curr.vehicleList[vehicle][node].nodeIndx;
-                int differenceIndex2 = best.vehicleList[vehicle][node].nodeIndx;
-
-                difference[differenceIndex1] = curr.vehicleList[vehicle][node].nodeIndx;
+                if (curr.vehicleList[vehicle][node].nodeType == 'C')
+                    difference.insert(curr.vehicleList[vehicle][node].nodeIndx);
+                if (best.vehicleList[vehicle][node].nodeType == 'C')
+                    difference.insert(best.vehicleList[vehicle][node].nodeIndx);
             }
         }
+
+        // choose the longer vehicle
+        vector<Vehicle> longVehicle = (curr.vehicleList[vehicle].size() == longerVehicleLength) ? curr.vehicleList[vehicle] : best.vehicleList[vehicle];
+
+        // iterate through longer vehicle to insert all remaining customer nodes
+        for (vector<Vehicle>::iterator longVehicleIterator = longVehicle.begin() + node; longVehicleIterator != longVehicle.end(); longVehicleIterator++)
+        {
+            if ((*longVehicleIterator).nodeType == 'C')
+                difference.insert((*longVehicleIterator).nodeIndx);
+        }
     }
+
+    // selecting the larger flamingo
+    vector<vector<Vehicle>> largerFlamingo = (curr.vehicleList.size() == max(curr.vehicleList.size(), best.vehicleList.size())) ? curr.vehicleList : curr.vehicleList;
+
+    // iterating through the vehicles of the larger flamingo
+    for (vector<vector<Vehicle>>::iterator largerFlamingoIterator = largerFlamingo.begin() + vehicle; largerFlamingoIterator != largerFlamingo.end(); largerFlamingoIterator++)
+    {
+        vector<Vehicle> currentVehicle = (*largerFlamingoIterator);
+        for (vector<Vehicle>::iterator vehicleIterator = currentVehicle.begin(); vehicleIterator != currentVehicle.end(); vehicleIterator++)
+        {
+            if ((*vehicleIterator).nodeType == 'C')
+                difference.insert((*vehicleIterator).nodeIndx);
+        }
+    }
+
+    return difference;
 }

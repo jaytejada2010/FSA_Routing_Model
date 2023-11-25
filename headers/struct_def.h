@@ -125,6 +125,60 @@ class Flamingo{
 };
 
 /**
+ * @brief Operator class that can be used for Foragin and Migrating Operators
+ * 
+ * scores => array of scores of each operator for the behavior
+ * 
+ */
+class Operators{
+    public:
+        vector<int> scores;
+
+    Operators(int num_operators){
+        // initialize all the scores of the operators(foraging/migrating) to 0
+        for (int x = 0; x < num_operators; x++){
+            scores.push_back(0);
+        }
+    }
+
+    // GETTERS
+    int getScore(int index){
+        return this->scores[index];
+    }
+
+    int getRandomOperator(){
+        int totalScore = 0;
+
+        // get the total score of all operators
+        for(int x = 0; x < scores.size(); x++){
+            totalScore += this->scores[x];
+        }
+        // Generate a random number between start and end (inclusive)
+        int randomValue = rand() % (totalScore - 1);
+
+        for(int x = 0; x < scores.size(); x++){
+            randomValue -= this->scores[x];
+            if(randomValue < 0)
+                return x;
+        }
+
+        return 0;
+    }
+
+    // SETTERS
+    void setScore(int index, int score){
+        this->scores[index] += score;
+    }
+
+    // OTHER FUNCTIONS
+    void displayScores(){
+        for(int x = 0; x < scores.size(); x++){
+            cout << endl << "Operator " << x << ": " << scores[x];
+        }
+    }
+};
+
+/**
  * location
  * x - x-coordinate
  * y - y-coordinate

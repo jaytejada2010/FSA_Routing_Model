@@ -1,7 +1,9 @@
 #include "sub_functions.h"
 
+Operators foraging(3);
+
 /**
- * @brief Flamingo Operator
+ * @brief Flamingo Operator - 0
  * for every recharge station in the flamingo, choose the next available technology,
  * this will cost more but time will be reduced
  * 
@@ -22,7 +24,7 @@ void chooseDifferentTechnology(Flamingo *fl) {
 }
 
 /**
- * @brief Flamingo Operator
+ * @brief Flamingo Operator - 1
  * given a flamingo, find the shortest and longest route and balance them where their new sizes difference should not 
  * be bigger than 1
  * 
@@ -70,6 +72,23 @@ void balanceVehicleRoutes(Flamingo *fl){
     }
 }
 
+
+/**
+ * @brief Flamingo Operator - 2
+ * 
+ * for each vehicle, find the shortest and longest sub-trip (Charging Station - Charging Station)
+ * move the charging station from the shortest sub-trip to the middle of the longest sub-trip
+ * 
+ * ex.
+ *         SHORT   LONGEST
+ * R C C C R C R C C C C C C C R
+ * 
+ * becomes
+ * R C C C R C C C C C R C C C R
+ * 
+ * @param fl 
+ * @return ** void 
+ */
 void balanceChargingStations(Flamingo *fl){
     for(int vehicle = 0; vehicle < (*fl).vehicleList.size(); vehicle++){
         // initialize starting and end points of the shortest and longest sub-trip
@@ -111,4 +130,31 @@ void balanceChargingStations(Flamingo *fl){
             (*fl).vehicleList[vehicle].erase((*fl).vehicleList[vehicle].begin() + ndxToMove);
         }
     }
+}
+
+/**
+ * @brief call a foraging operator
+ * 
+ * @param fl 
+ * @return ** int index of the operator chosen
+ */
+int callForagingOperator(Flamingo *fl){
+    int op = foraging.getRandomOperator();
+    
+    switch (op) {
+    case 0:
+        chooseDifferentTechnology(fl);
+        break;
+    case 1:
+        balanceVehicleRoutes(fl);
+        break;
+    case 2:
+        balanceChargingStations(fl);
+        break;
+    default:
+        cout << "\nInvalid foraging operator";
+        break;
+    }
+
+    return op;
 }

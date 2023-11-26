@@ -1,4 +1,72 @@
 /**
+ * @brief Migratory Suboperator
+ * the migrating flamingo is compared with the leader flamingo and
+ * an array of the differences is returned
+ *
+ * @param curr pass by value to avoid manipulation, best pass by value to avoid manipulation
+ * @return ** void
+ */
+
+set<int> getDifferenceSet(Flamingo curr, Flamingo best)
+{
+    // creating the difference set
+    set<int> difference;
+
+    // filling difference set with node differences
+    // iterate through the vehicles of the flamingos
+
+    int vehicle = 0;
+
+    for (; vehicle < min(curr.vehicleList.size(), best.vehicleList.size()); vehicle++)
+    {
+        // get length of shorter and longer vehicle lengths
+        int shorterVehicleLength = min(curr.vehicleList[vehicle].size(), best.vehicleList[vehicle].size());
+        int longerVehicleLength = max(curr.vehicleList[vehicle].size(), best.vehicleList[vehicle].size());
+
+        int node = 0;
+
+        // iterate through the nodes of the vehicles up to shorter vehicle length
+        for (; node < shorterVehicleLength; node++)
+        {
+            // check if any if the nodes are the different
+            if (curr.vehicleList[vehicle][node].nodeIndx != best.vehicleList[vehicle][node].nodeIndx)
+            {
+                if (curr.vehicleList[vehicle][node].nodeType == 'C')
+                    difference.insert(curr.vehicleList[vehicle][node].nodeIndx);
+                if (best.vehicleList[vehicle][node].nodeType == 'C')
+                    difference.insert(best.vehicleList[vehicle][node].nodeIndx);
+            }
+        }
+
+        // choose the longer vehicle
+        vector<Vehicle> longVehicle = (curr.vehicleList[vehicle].size() == longerVehicleLength) ? curr.vehicleList[vehicle] : best.vehicleList[vehicle];
+
+        // iterate through longer vehicle to insert all remaining customer nodes
+        for (vector<Vehicle>::iterator longVehicleIterator = longVehicle.begin() + node; longVehicleIterator != longVehicle.end(); longVehicleIterator++)
+        {
+            if ((*longVehicleIterator).nodeType == 'C')
+                difference.insert((*longVehicleIterator).nodeIndx);
+        }
+    }
+
+    // selecting the larger flamingo
+    vector<vector<Vehicle>> largerFlamingo = (curr.vehicleList.size() == max(curr.vehicleList.size(), best.vehicleList.size())) ? curr.vehicleList : curr.vehicleList;
+
+    // iterating through the vehicles of the larger flamingo
+    for (vector<vector<Vehicle>>::iterator largerFlamingoIterator = largerFlamingo.begin() + vehicle; largerFlamingoIterator != largerFlamingo.end(); largerFlamingoIterator++)
+    {
+        vector<Vehicle> currentVehicle = (*largerFlamingoIterator);
+        for (vector<Vehicle>::iterator vehicleIterator = currentVehicle.begin(); vehicleIterator != currentVehicle.end(); vehicleIterator++)
+        {
+            if ((*vehicleIterator).nodeType == 'C')
+                difference.insert((*vehicleIterator).nodeIndx);
+        }
+    }
+
+    return difference;
+}
+
+/**
  * @brief Migratory Operator
  * the migrating flamingo is compared with the leader flamingo and
  * the difference in nodes is replaced accordingly
@@ -144,9 +212,9 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
         // insert only if the node is valid
         if (nodeIndx != -1)
         {
-            Vehicle v(nodeIndx, nodeType, time);
+            Vehicle insertedVehicle(nodeIndx, nodeType, time);
             // insert node to the vehicle
-            fl.insertNodetoVehicle(vehicle, v);
+            fl.insertNodetoVehicle(vehicle, insertedVehicle);
         }
     }
 
@@ -159,72 +227,4 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
 
     // insert replace current flamingo with new flamingo
     *curr = fl;
-}
-
-/**
- * @brief Migratory Suboperator
- * the migrating flamingo is compared with the leader flamingo and
- * an array of the differences is returned
- *
- * @param curr pass by value to avoid manipulation, best pass by value to avoid manipulation
- * @return ** void
- */
-
-set<int> getDifferenceSet(Flamingo curr, Flamingo best)
-{
-    // creating the difference set
-    set<int> difference;
-
-    // filling difference set with node differences
-    // iterate through the vehicles of the flamingos
-
-    int vehicle = 0;
-
-    for (; vehicle < min(curr.vehicleList.size(), best.vehicleList.size()); vehicle++)
-    {
-        // get length of shorter and longer vehicle lengths
-        int shorterVehicleLength = min(curr.vehicleList[vehicle].size(), best.vehicleList[vehicle].size());
-        int longerVehicleLength = max(curr.vehicleList[vehicle].size(), best.vehicleList[vehicle].size());
-
-        int node = 0;
-
-        // iterate through the nodes of the vehicles up to shorter vehicle length
-        for (; node < shorterVehicleLength; node++)
-        {
-            // check if any if the nodes are the different
-            if (curr.vehicleList[vehicle][node].nodeIndx != best.vehicleList[vehicle][node].nodeIndx)
-            {
-                if (curr.vehicleList[vehicle][node].nodeType == 'C')
-                    difference.insert(curr.vehicleList[vehicle][node].nodeIndx);
-                if (best.vehicleList[vehicle][node].nodeType == 'C')
-                    difference.insert(best.vehicleList[vehicle][node].nodeIndx);
-            }
-        }
-
-        // choose the longer vehicle
-        vector<Vehicle> longVehicle = (curr.vehicleList[vehicle].size() == longerVehicleLength) ? curr.vehicleList[vehicle] : best.vehicleList[vehicle];
-
-        // iterate through longer vehicle to insert all remaining customer nodes
-        for (vector<Vehicle>::iterator longVehicleIterator = longVehicle.begin() + node; longVehicleIterator != longVehicle.end(); longVehicleIterator++)
-        {
-            if ((*longVehicleIterator).nodeType == 'C')
-                difference.insert((*longVehicleIterator).nodeIndx);
-        }
-    }
-
-    // selecting the larger flamingo
-    vector<vector<Vehicle>> largerFlamingo = (curr.vehicleList.size() == max(curr.vehicleList.size(), best.vehicleList.size())) ? curr.vehicleList : curr.vehicleList;
-
-    // iterating through the vehicles of the larger flamingo
-    for (vector<vector<Vehicle>>::iterator largerFlamingoIterator = largerFlamingo.begin() + vehicle; largerFlamingoIterator != largerFlamingo.end(); largerFlamingoIterator++)
-    {
-        vector<Vehicle> currentVehicle = (*largerFlamingoIterator);
-        for (vector<Vehicle>::iterator vehicleIterator = currentVehicle.begin(); vehicleIterator != currentVehicle.end(); vehicleIterator++)
-        {
-            if ((*vehicleIterator).nodeType == 'C')
-                difference.insert((*vehicleIterator).nodeIndx);
-        }
-    }
-
-    return difference;
 }

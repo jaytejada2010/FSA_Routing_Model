@@ -179,7 +179,7 @@ bool checkFeasibilityFlamingo()
  */
 void populateFlamingo()
 {
-    int flamingos = number_of_nodes;
+    int flamingos = number_of_nodes / 4;
 
     for (int flamingo = 0; flamingo < flamingos; flamingo++)
     {
@@ -375,6 +375,7 @@ int main()
 
     populateFlamingo();
     flamingoSearchAlgorithm(f);
+    cout << "Ended :)" << endl;
     //     displayFlamingoPopulation(f, "flamingo_population.txt");
 
     //     bool check = checkFeasibilityFlamingo();

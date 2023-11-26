@@ -1,6 +1,3 @@
-#include "struct_def.h"
-#include "sub_functions.h"
-
 /**
  * @brief Migratory Operator
  * the migrating flamingo is compared with the leader flamingo and

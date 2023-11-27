@@ -183,73 +183,79 @@ void populateFlamingo()
 
     for (int flamingo = 0; flamingo < flamingos; flamingo++)
     {
-        // get how many vehicles for this flamingo randomly
-        int vehicles = random(1, prog_params.num_of_vehicles);
-
-        Flamingo fl(vehicles, prog_params.num_of_customers, prog_params.num_of_recharge);
-
-        for (int vehicle = 0; vehicle < vehicles; vehicle++)
+        bool feasibility = false;
+        Flamingo fl;
+        while (!feasibility)
         {
-            // start every route with a depot
-            fl.insertNodetoVehicle(vehicle, getDepot());
-        }
+            // get how many vehicles for this flamingo randomly
+            int vehicles = random(prog_params.num_of_vehicles / 2, prog_params.num_of_vehicles);
 
-        while (!fl.unvisitedCustomers.empty())
-        {
-            // which vehicle to insert the node
-            int vehicle = random(0, vehicles - 1);
+            fl = Flamingo(vehicles, prog_params.num_of_customers, prog_params.num_of_recharge);
 
-            char nodeType = 'C';
-            int nodeIndx = -1;
-            int time = 0;
-
-            int node = -1;
-
-            if (fl.unvisitedRecharge.size() > 1)
+            for (int vehicle = 0; vehicle < vehicles; vehicle++)
             {
-                nodeType = (random(0, 1) == 0) ? 'C' : 'R';
+                // start every route with a depot
+                fl.insertNodetoVehicle(vehicle, getDepot());
             }
 
-            if (nodeType == 'C')
+            while (!fl.unvisitedCustomers.empty())
             {
-                // insert a customer
-                node = random(0, fl.unvisitedCustomers.size() - 1);
-                nodeIndx = fl.getCustomerFromSet(node);
-                time = c_nodes[nodeIndx].getServiceTime();
+                // which vehicle to insert the node
+                int vehicle = random(0, vehicles - 1);
 
-                fl.visitCustomer(nodeIndx);
-            }
-            else if (nodeType == 'R')
-            {
-                // make sure no charging stations are consecutive of each other
-                if (fl.vehicleList[vehicle][fl.vehicleList[vehicle].size() - 1].nodeType == 'C')
+                char nodeType = 'C';
+                int nodeIndx = -1;
+                int time = 0;
+
+                int node = -1;
+
+                if (fl.unvisitedRecharge.size() > 1)
                 {
-                    // insert a recharge station but not the depot
-                    node = random(1, fl.unvisitedRecharge.size() - 1);
-                    nodeIndx = fl.getRechargeFromSet(node);
+                    nodeType = (random(0, 1) == 0) ? 'C' : 'R';
+                }
 
-                    fl.visitRecharge(nodeIndx);
+                if (nodeType == 'C')
+                {
+                    // insert a customer
+                    node = random(0, fl.unvisitedCustomers.size() - 1);
+                    nodeIndx = fl.getCustomerFromSet(node);
+                    time = c_nodes[nodeIndx].getServiceTime();
+
+                    fl.visitCustomer(nodeIndx);
+                }
+                else if (nodeType == 'R')
+                {
+                    // make sure no charging stations are consecutive of each other
+                    if (fl.vehicleList[vehicle][fl.vehicleList[vehicle].size() - 1].nodeType == 'C')
+                    {
+                        // insert a recharge station but not the depot
+                        node = random(1, fl.unvisitedRecharge.size() - 1);
+                        nodeIndx = fl.getRechargeFromSet(node);
+
+                        fl.visitRecharge(nodeIndx);
+                    }
+                }
+                else
+                {
+                    cout << "Invalid node type at " << nodeType << endl;
+                    exit(0);
+                }
+
+                // insert only if the node is valid
+                if (nodeIndx != -1)
+                {
+                    Vehicle v(nodeIndx, nodeType, time);
+                    // insert node to the vehicle
+                    fl.insertNodetoVehicle(vehicle, v);
                 }
             }
-            else
-            {
-                cout << "Invalid node type at " << nodeType << endl;
-                exit(0);
-            }
 
-            // insert only if the node is valid
-            if (nodeIndx != -1)
+            for (int vehicle = 0; vehicle < vehicles; vehicle++)
             {
-                Vehicle v(nodeIndx, nodeType, time);
-                // insert node to the vehicle
-                fl.insertNodetoVehicle(vehicle, v);
+                // end every route with a depot
+                fl.insertNodetoVehicle(vehicle, getDepot());
             }
-        }
-
-        for (int vehicle = 0; vehicle < vehicles; vehicle++)
-        {
-            // end every route with a depot
-            fl.insertNodetoVehicle(vehicle, getDepot());
+            feasibility = checkFeasibilityEachFlamingo(&fl);
         }
 
         // insert flamingo to the population
@@ -257,8 +263,21 @@ void populateFlamingo()
     }
 }
 
+/**
+ * @brief comparator function for ranking flamingos from least cost to greatest cost
+ *
+ *
+ * @return ** bool
+ */
+bool rankFlamingos(Flamingo f1, Flamingo f2)
+{
+    return (f1.cost < f2.cost);
+}
+
 void flamingoSearchAlgorithm(vector<Flamingo> f)
 {
+    // get ranking
+    sort(f.begin(), f.end(), rankFlamingos);
     // divide the flamingo into 2 groups
     int middle = ceil(f.size() * group_ratio);
     cout << endl
@@ -330,8 +349,6 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
         double current_cost = f[x].cost;
         Flamingo currentFlamingo, bestFlamingo; // temporary flamingo, only change the current flamingo if it is feasible
 
-        cout << endl
-             << " Migrating: " << x;
         int count = 0;
 
         // if not feasible, update again until it becomes feasible
@@ -375,7 +392,6 @@ int main()
 
     populateFlamingo();
     flamingoSearchAlgorithm(f);
-    cout << "Ended :)" << endl;
     //     displayFlamingoPopulation(f, "flamingo_population.txt");
 
     //     bool check = checkFeasibilityFlamingo();

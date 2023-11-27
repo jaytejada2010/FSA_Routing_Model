@@ -265,7 +265,8 @@ void populateFlamingo()
 
 /**
  * @brief comparator function for ranking flamingos from least cost to greatest cost
- *
+ * @param f1 FLamingo; first flamingo
+ * @param f2 Flamingo; second flamingo
  *
  * @return ** bool
  */
@@ -346,7 +347,6 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
     for (int x = m_start; x < m_end; x++)
     {
         bool feasibility = false;
-        double current_cost = f[x].cost;
         Flamingo currentFlamingo, bestFlamingo; // temporary flamingo, only change the current flamingo if it is feasible
 
         int count = 0;
@@ -392,6 +392,7 @@ int main()
 
     populateFlamingo();
     flamingoSearchAlgorithm(f);
+    cout << "done flamingo" << endl;
     //     displayFlamingoPopulation(f, "flamingo_population.txt");
 
     //     bool check = checkFeasibilityFlamingo();

@@ -71,16 +71,16 @@ set<int> getDifferenceSet(Flamingo curr, Flamingo best)
  * the migrating flamingo is compared with the leader flamingo and
  * the difference in nodes is replaced accordingly
  *
- * @param curr pass by reference to manipulate, best pass by value to avoid manipulation
+ * @param curr pass by reference to manipulate
+ * @param best pass by value to avoid manipulation
  * @return ** void
  */
-
 void migrateFlamingo(Flamingo *curr, Flamingo best)
 {
     set<int> difference = getDifferenceSet(*curr, best);
 
     // get how many vehicles in the flamingo by getting the ceiling of half of the sum of two sizes
-    int vehicles = ceil(((*curr).vehicleList.size() + best.vehicleList.size()) / 2);
+    int vehicles = floor(((*curr).vehicleList.size() + best.vehicleList.size()) / 2);
 
     Flamingo fl(vehicles, prog_params.num_of_customers, prog_params.num_of_recharge);
 
@@ -95,39 +95,35 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
     // iterating through current flamingo's vehicles
     int v = 0;
 
-    for (; v < (*curr).vehicleList.size(); v++)
+    int curr_v_count = 0;
+    for (; v < (*curr).vehicleList.size() && v < vehicles; v++)
     {
-        int node_iter = 0;
-        int current_vehicle_size = (*curr).vehicleList.size();
-        // iterating through the current vehicle's nodes
-        for (; node_iter < current_vehicle_size; node_iter++)
+        if (!fl.unvisitedCustomers.empty())
         {
-            // defaults
-            char nodeType = 'C';
-            int nodeIndx = -1;
-            int time = 0;
+            int node_iter = 0;
+            int current_vehicle_size = (*curr).vehicleList[v].size();
 
-            int node = -1;
-
-            // if customer node and not in difference set, copy to new flamingo
-            if ((*curr).vehicleList[v][node_iter].nodeType == 'C' && difference.find((*curr).vehicleList[v][node_iter].nodeIndx) == difference.end())
+            // iterating through the current vehicle's nodes
+            for (; node_iter < current_vehicle_size; node_iter++)
             {
-                // insert a customer
-                node = (*curr).vehicleList[v][node_iter].nodeIndx;
-                nodeIndx = fl.getCustomerFromSet(node);
-                time = c_nodes[nodeIndx].getServiceTime();
+                // defaults
+                char nodeType = 'C';
+                int nodeIndx = -1;
+                int time = 0;
 
-                fl.visitCustomer(nodeIndx);
-            }
-            // else, insert another node
-            else
-            {
-                if (fl.unvisitedRecharge.size() > 1)
+                int node = -1;
+
+                // if customer node and not in difference set, copy to new flamingo
+                if ((*curr).vehicleList[v][node_iter].nodeType == 'C' && difference.find((*curr).vehicleList[v][node_iter].nodeIndx) == difference.end())
                 {
-                    nodeType = (random(0, 1) == 0) ? 'C' : 'R';
-                }
+                    // insert a customer
+                    node = (*curr).vehicleList[v][node_iter].nodeIndx;
+                    nodeIndx = (*curr).vehicleList[v][node_iter].nodeIndx;
+                    time = c_nodes[nodeIndx].getServiceTime();
 
-                if (nodeType == 'C')
+                    fl.visitCustomer(nodeIndx);
+                }
+                else if ((*curr).vehicleList[v][node_iter].nodeType == 'C')
                 {
                     // insert a customer
                     node = random(0, fl.unvisitedCustomers.size() - 1);
@@ -136,31 +132,26 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
 
                     fl.visitCustomer(nodeIndx);
                 }
-                else if (nodeType == 'R')
+                else if ((*curr).vehicleList[v][node_iter].nodeType == 'R')
                 {
                     // make sure no charging stations are consecutive of each other
                     if (fl.vehicleList[v][fl.vehicleList[v].size() - 1].nodeType == 'C')
                     {
                         // insert a recharge station but not the depot
-                        node = random(1, fl.unvisitedRecharge.size() - 1);
-                        nodeIndx = fl.getRechargeFromSet(node);
+                        node = (*curr).vehicleList[v][node_iter].nodeIndx;
+                        nodeIndx = (*curr).vehicleList[v][node_iter].nodeIndx;
 
                         fl.visitRecharge(nodeIndx);
                     }
                 }
-                else
-                {
-                    cout << "Invalid node type at " << nodeType << endl;
-                    exit(0);
-                }
-            }
 
-            // insert only if the node is valid
-            if (nodeIndx != -1)
-            {
-                Vehicle newNode(nodeIndx, nodeType, time);
-                // insert node to the vehicle
-                fl.insertNodetoVehicle(v, newNode);
+                // insert only if the node is valid
+                if (nodeIndx != -1)
+                {
+                    Vehicle newNode(nodeIndx, nodeType, time);
+                    // insert node to the vehicle
+                    fl.insertNodetoVehicle(v, newNode);
+                }
             }
         }
     }
@@ -168,7 +159,7 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
     while (!fl.unvisitedCustomers.empty())
     {
         // which vehicle to insert the node
-        int vehicle = random(v, vehicles - 1);
+        int vehicle = ((*curr).vehicleList.size() < vehicles) ? random(v, vehicles - 1) : random(0, vehicles - 1);
 
         // defaults
         char nodeType = 'C';
@@ -202,11 +193,6 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
 
                 fl.visitRecharge(nodeIndx);
             }
-        }
-        else
-        {
-            cout << "Invalid node type at " << nodeType << endl;
-            exit(0);
         }
 
         // insert only if the node is valid

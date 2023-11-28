@@ -1,6 +1,6 @@
 #include "sub_functions.h"
 
-Operators foraging(3);
+Operators foraging(2);
 
 /**
  * @brief Flamingo Operator - 0
@@ -44,7 +44,7 @@ void balanceVehicleRoutes(Flamingo *fl){
 
     // find the shortest and longest vehicle route
     for(int vehicle = 0; vehicle < (*fl).vehicleList.size(); vehicle++){
-        cout << endl << "\t vehicle size: " << (*fl).vehicleList[vehicle].size();
+        // cout << endl << "\t vehicle size: " << (*fl).vehicleList[vehicle].size();
         // find the shortest vehicle route
         if((*fl).vehicleList[vehicle].size() < (*fl).vehicleList[shortest_ndx].size()){
             shortest_ndx = vehicle;
@@ -142,13 +142,13 @@ int callForagingOperator(Flamingo *fl){
     int op = foraging.getRandomOperator();
     
     switch (op) {
+    // case 0:
+    //     chooseDifferentTechnology(fl);
+    //     break;
     case 0:
-        chooseDifferentTechnology(fl);
-        break;
-    case 1:
         balanceVehicleRoutes(fl);
         break;
-    case 2:
+    case 1:
         balanceChargingStations(fl);
         break;
     default:

@@ -137,7 +137,7 @@ class Operators{
     Operators(int num_operators){
         // initialize all the scores of the operators(foraging/migrating) to 0
         for (int x = 0; x < num_operators; x++){
-            scores.push_back(0);
+            scores.push_back(1);
         }
     }
 
@@ -153,16 +153,26 @@ class Operators{
         for(int x = 0; x < scores.size(); x++){
             totalScore += this->scores[x];
         }
-        // Generate a random number between start and end (inclusive)
-        int randomValue = rand() % (totalScore - 1);
 
-        for(int x = 0; x < scores.size(); x++){
-            randomValue -= this->scores[x];
-            if(randomValue < 0)
+        float threashold = 0;
+
+        for (int x = 0; x < scores.size(); x++)
+        {
+            threashold += (float)(this->scores[x] / totalScore);
+            if((float)(rand() % this->scores.size()) < threashold)
                 return x;
         }
 
-        return 0;
+        // // Generate a random number between start and end (inclusive)
+        // int randomValue = rand() % (totalScore + 1);
+
+        // for(int x = 0; x < scores.size(); x++){
+        //     randomValue -= this->scores[x];
+        //     if(randomValue < 0)
+        //         return x;
+        // }
+
+        // return 0;
     }
 
     // SETTERS

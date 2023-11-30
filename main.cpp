@@ -50,18 +50,18 @@ bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost)
     double total_time = 0, travel_time = 0, service_time = 0, refill_time = 0;
     double total_energy = 0, total_energy_subtrip = 0;
     double total_demand = 0;
-    cout << "\t size: " << v.size();
+    // cout << "\t size: " << v.size();
     // first node => first node of the current sub-trip
     for (int first_node = 0; first_node < v.size() - 1 && checkFeasibility;)
     {
-        cout << endl
-             << "\tfirst node: " << first_node;
+        // cout << endl
+        //      << "\tfirst node: " << first_node;
         total_energy_subtrip = 0;
         // second node => current node, it will stop if it will encounter another charging station (end of sub trip)
         for (int second_node = first_node + 1; second_node < v.size() && checkFeasibility; second_node++)
         {
-            cout << endl
-                 << "\t\tsecond node: " << second_node << " " << v[second_node].nodeType;
+            // cout << endl
+            //      << "\t\tsecond node: " << second_node << " " << v[second_node].nodeType;
             // reset time variables for each node
             travel_time = service_time = refill_time = 0;
 
@@ -86,14 +86,14 @@ bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost)
                 }
 
                 // calculate time to refill the needed
-                cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time << "\tchosen tech: " << r_nodes[v[first_node].nodeIndx].getChosenTech() << "\tname: " << r_nodes[v[first_node].nodeIndx].getName() << "\tspeed: " << tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getSpeed();
+                // cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time << "\tchosen tech: " << r_nodes[v[first_node].nodeIndx].getChosenTech() << "\tname: " << r_nodes[v[first_node].nodeIndx].getName() << "\tspeed: " << tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getSpeed();
                 int chosen_speed = tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getSpeed();
                 v[first_node].time = refill_time = calculateTimeRecharge(chosen_speed, total_energy_subtrip);
                 first_node = second_node;
                 total_time += travel_time + refill_time;
-                cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time << "\tchosen tech: " << r_nodes[v[first_node].nodeIndx].getChosenTech() << "\tname: " << r_nodes[v[first_node].nodeIndx].getName() << "\tspeed: " << tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getSpeed();
-                cout << endl
-                     << "total time: " << total_time;
+                // cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time << "\tchosen tech: " << r_nodes[v[first_node].nodeIndx].getChosenTech() << "\tname: " << r_nodes[v[first_node].nodeIndx].getName() << "\tspeed: " << tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getSpeed();
+                // cout << endl
+                //      << "total time: " << total_time;
 
                 // calculate the cost of the refill
                 double chosen_cost = tech_list[r_nodes[v[first_node].nodeIndx].getChosenTech()].getCost();
@@ -106,9 +106,9 @@ bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost)
                 total_demand = c_nodes[v[second_node].nodeIndx].getDemand();
                 v[second_node].time = service_time = c_nodes[v[second_node].nodeIndx].getServiceTime();
                 total_time += travel_time + service_time;
-                cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time;
-                cout << endl
-                     << "total time: " << total_time;
+                // cout << "\ttravel time: " << travel_time << "\tservice time: " << service_time << "\trefill time: " << refill_time;
+                // cout << endl
+                //      << "total time: " << total_time;
             }
         }
     }
@@ -116,9 +116,9 @@ bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost)
     if (total_demand > prog_params.vehicle_capacity || total_time > prog_params.time_max)
         checkFeasibility = false;
 
-    cout << endl
-         << "\ttotal demand: " << total_demand << "(" << prog_params.vehicle_capacity << ")"
-         << "\ttotal time: " << total_time << "(" << prog_params.time_max << ")";
+    // cout << endl
+    //      << "\ttotal demand: " << total_demand << "(" << prog_params.vehicle_capacity << ")"
+    //      << "\ttotal time: " << total_time << "(" << prog_params.time_max << ")";
     return checkFeasibility;
 }
 
@@ -132,19 +132,19 @@ bool checkFeasibilityEachFlamingo(Flamingo *fl)
 {
     bool checkFeasibility = true;
     double cost = 0;
-    cout << " size " << f.size();
+    // cout << " size " << f.size();
     // check the feasibility of each flamingo
     for (int vehicle = 0; vehicle < (*fl).vehicleList.size() && checkFeasibility; vehicle++)
     {
-        cout << endl
-             << "Vehicle: " << vehicle;
+        // cout << endl
+        //      << "Vehicle: " << vehicle;
         checkFeasibility = checkFesaibilityVehicle((*fl).vehicleList[vehicle], &cost);
     }
 
     // update cost
     (*fl).cost = cost;
-    cout << endl
-         << "total cost " << (*fl).cost << endl;
+    // cout << endl
+    //      << "total cost " << (*fl).cost << endl;
 
     return checkFeasibility;
 }
@@ -158,12 +158,12 @@ bool checkFeasibilityEachFlamingo(Flamingo *fl)
 bool checkFeasibilityFlamingo()
 {
     bool checkFeasibility = true;
-    cout << f.size();
+    // cout << f.size();
     // check the feasibility of each flamingo
     for (int flamingo = 0; flamingo < f.size() && checkFeasibility; flamingo++)
     {
-        cout << endl
-             << "Flamingo: " << flamingo;
+        // cout << endl
+        //      << "Flamingo: " << flamingo;
         checkFeasibilityEachFlamingo(&f[flamingo]);
     }
     return checkFeasibility;
@@ -277,14 +277,17 @@ bool rankFlamingos(Flamingo f1, Flamingo f2)
 
 void flamingoSearchAlgorithm(vector<Flamingo> f)
 {
+    // initilize scoring
+
     // get ranking
     prevRank = f;
+    f.clear();
 
     // make foraging operator history
     vector<int> ops;
 
     // divide the flamingo into 2 groups
-    int middle = ceil(f.size() * group_ratio);
+    int middle = ceil(prevRank.size() * group_ratio);
     cout << endl
          << "middle " << middle;
     // foraging group
@@ -292,7 +295,7 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
     cout << endl
          << "foraging: " << f_start << " " << f_end;
     // migrating group
-    int m_start = middle, m_end = f.size();
+    int m_start = middle, m_end = prevRank.size();
     cout << endl
          << "migrating: " << m_start << " " << m_end;
     // update foraging group
@@ -300,7 +303,7 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
     {
         bool feasibility = false;
         int op = 0;
-        double current_cost = f[x].cost;
+        double current_cost = prevRank[x].cost;
         Flamingo temp; // temporary flamingo, only change the current flamingo if it is feasible
 
         cout << endl
@@ -318,7 +321,7 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
             // temp after the update: 0 3 4 0 2 6 5 0 (it will not update from here, if this is not feasible)
             // the temp is not feasible
             // temp will go back to: 0 3 4 2 0 6 5 0 and update again
-            temp = f[x];
+            temp = prevRank[x];
             op = callForagingOperator(&temp);
             ops.push_back(op);
 
@@ -329,22 +332,22 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
         } while (!feasibility); //  || temp.cost > prevRank[x].cost
 
         // update current flamingo
-        f[x] = temp;
+        f.push_back(temp);
 
-        cout << endl
-             << "feasiblity " << feasibility;
+        // cout << endl
+        //      << "feasiblity " << feasibility;
         int score = BRONZE;
         // evaluate and score the operator
-        if (f[0].cost > f[x].cost)
+        if (prevRank[0].cost > temp.cost)
         {
             score = GOLD; // if the new cost is better than the leader flamingo
         }
-        else if (current_cost > f[x].cost)
+        else if (current_cost > temp.cost)
         {
             score = SILVER; // if the new cost is better than the current flamingo
         }
-        cout << endl
-             << "score " << score;
+        // cout << endl
+        //      << "score " << score;
         // update score of flamingo operator
         foraging.setScore(op, score);
         foraging.displayScores();
@@ -368,7 +371,7 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
             // temp after the update: 0 3 4 0 2 6 5 0 (it will not update from here, if this is not feasible)
             // the temp is not feasible
             // temp will go back to: 0 3 4 2 0 6 5 0 and update again
-            currentFlamingo = f[x];
+            currentFlamingo = prevRank[x];
             bestFlamingo = prevRank[0];
 
             migrateFlamingo(&currentFlamingo, bestFlamingo);
@@ -380,10 +383,10 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
         } while (!feasibility);
 
         // update current flamingo
-        f[x] = currentFlamingo;
+        f.push_back(currentFlamingo);
 
-        cout << endl
-             << "feasiblity " << feasibility;
+        // cout << endl
+        //      << "feasiblity " << feasibility;
     }
 
     for (int ctr = 0; ctr < f.size(); ctr++)
@@ -403,7 +406,8 @@ bool isConverged(int *ai_kun)
 {
     // bool isConvergent = false;
 
-    // float flamingo_delta = f[0].cost;
+    // float flamingo_delta = f[0].cost - prevRank[0];
+    cout << " " << prevRank.size() << " " << prevRank[prevRank.size()].cost << endl;
 
     return (*ai_kun)++ < 5 ? true : false;
 }

@@ -96,65 +96,59 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
     int v = 0;
 
     int curr_v_count = 0;
-    for (; v < (*curr).vehicleList.size() && v < vehicles; v++)
+    for (; v < (*curr).vehicleList.size() && v < vehicles && !fl.unvisitedCustomers.empty(); v++)
     {
-        if (!fl.unvisitedCustomers.empty())
+        int node_iter = 0;
+        int current_vehicle_size = (*curr).vehicleList[v].size();
+
+        // iterating through the current vehicle's nodes
+        for (; node_iter < current_vehicle_size && !fl.unvisitedCustomers.empty(); node_iter++)
         {
-            int node_iter = 0;
-            int current_vehicle_size = (*curr).vehicleList[v].size();
+            // defaults
+            char nodeType = 'C';
+            int nodeIndx = -1;
+            int time = 0;
 
-            // iterating through the current vehicle's nodes
-            for (; node_iter < current_vehicle_size; node_iter++)
+            int node = -1;
+
+            // if customer node and not in difference set, copy to new flamingo
+            if ((*curr).vehicleList[v][node_iter].nodeType == 'C' && difference.find((*curr).vehicleList[v][node_iter].nodeIndx) == difference.end())
             {
-                if (!fl.unvisitedCustomers.empty())
+                // insert a customer
+                node = (*curr).vehicleList[v][node_iter].nodeIndx;
+                nodeIndx = (*curr).vehicleList[v][node_iter].nodeIndx;
+                time = c_nodes[nodeIndx].getServiceTime();
+
+                fl.visitCustomer(nodeIndx);
+            }
+            else if ((*curr).vehicleList[v][node_iter].nodeType == 'C')
+            {
+                // insert a customer
+                node = random(0, fl.unvisitedCustomers.size() - 1);
+                nodeIndx = fl.getCustomerFromSet(node);
+                time = c_nodes[nodeIndx].getServiceTime();
+
+                fl.visitCustomer(nodeIndx);
+            }
+            else if ((*curr).vehicleList[v][node_iter].nodeType == 'R')
+            {
+                // make sure no charging stations are consecutive of each other
+                if (fl.vehicleList[v][fl.vehicleList[v].size() - 1].nodeType == 'C')
                 {
-                    // defaults
-                    char nodeType = 'C';
-                    int nodeIndx = -1;
-                    int time = 0;
+                    // insert a recharge station but not the depot
+                    node = (*curr).vehicleList[v][node_iter].nodeIndx;
+                    nodeIndx = (*curr).vehicleList[v][node_iter].nodeIndx;
 
-                    int node = -1;
-
-                    // if customer node and not in difference set, copy to new flamingo
-                    if ((*curr).vehicleList[v][node_iter].nodeType == 'C' && difference.find((*curr).vehicleList[v][node_iter].nodeIndx) == difference.end())
-                    {
-                        // insert a customer
-                        node = (*curr).vehicleList[v][node_iter].nodeIndx;
-                        nodeIndx = (*curr).vehicleList[v][node_iter].nodeIndx;
-                        time = c_nodes[nodeIndx].getServiceTime();
-
-                        fl.visitCustomer(nodeIndx);
-                    }
-                    else if ((*curr).vehicleList[v][node_iter].nodeType == 'C')
-                    {
-                        // insert a customer
-                        node = random(0, fl.unvisitedCustomers.size() - 1);
-                        nodeIndx = fl.getCustomerFromSet(node);
-                        time = c_nodes[nodeIndx].getServiceTime();
-
-                        fl.visitCustomer(nodeIndx);
-                    }
-                    else if ((*curr).vehicleList[v][node_iter].nodeType == 'R')
-                    {
-                        // make sure no charging stations are consecutive of each other
-                        if (fl.vehicleList[v][fl.vehicleList[v].size() - 1].nodeType == 'C')
-                        {
-                            // insert a recharge station but not the depot
-                            node = (*curr).vehicleList[v][node_iter].nodeIndx;
-                            nodeIndx = (*curr).vehicleList[v][node_iter].nodeIndx;
-
-                            fl.visitRecharge(nodeIndx);
-                        }
-                    }
-
-                    // insert only if the node is valid
-                    if (nodeIndx != -1)
-                    {
-                        Vehicle newNode(nodeIndx, nodeType, time);
-                        // insert node to the vehicle
-                        fl.insertNodetoVehicle(v, newNode);
-                    }
+                    fl.visitRecharge(nodeIndx);
                 }
+            }
+
+            // insert only if the node is valid
+            if (nodeIndx != -1)
+            {
+                Vehicle newNode(nodeIndx, nodeType, time);
+                // insert node to the vehicle
+                fl.insertNodetoVehicle(v, newNode);
             }
         }
     }

@@ -131,7 +131,7 @@ bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost)
 bool checkFeasibilityEachFlamingo(Flamingo *fl)
 {
     bool checkFeasibility = true;
-    double cost = 0;
+    double cost = prog_params.fixed_cost_recharge * (*fl).vehicleList.size();
     // cout << " size " << f.size();
     // check the feasibility of each flamingo
     for (int vehicle = 0; vehicle < (*fl).vehicleList.size() && checkFeasibility; vehicle++)
@@ -188,7 +188,7 @@ void populateFlamingo()
         while (!feasibility)
         {
             // get how many vehicles for this flamingo randomly
-            int vehicles = random(prog_params.num_of_vehicles / 2, prog_params.num_of_vehicles);
+            int vehicles = random(prog_params.num_of_vehicles / 4, prog_params.num_of_vehicles / 2);
 
             fl = Flamingo(vehicles, prog_params.num_of_customers, prog_params.num_of_recharge);
 
@@ -394,7 +394,7 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
         string f_type = (ctr < m_start) ? "foraging" : "migrating";
         cout << endl
              << f_type << " flamingo [" << ctr << "]"
-             << " previous cost: " << prevRank[ctr].cost << " current cost: " << f[ctr].cost;
+             << " previous (" << prevRank[ctr].vehicleList.size() << ") cost: " << prevRank[ctr].cost << " current (" << f[ctr].vehicleList.size() << ") cost: " << f[ctr].cost;
 
         if (ctr < m_start)
             cout << "opeartor: " << ops[ctr];

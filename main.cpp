@@ -30,6 +30,11 @@
 double group_ratio = 0.8;          // ratio when diving flamingos into migrating and foraging
 float convergence_criterion = 0.9; // to check the if all flamingos has passed the optimal solution
 
+// division of flamingo into foraging and migratory
+int middle = 0;
+int f_start = 0, f_end = 0;
+int m_start = 0, m_end = 0;
+
 vector<Flamingo> f, prevRank;
 int number_of_nodes = 0;
 
@@ -131,6 +136,7 @@ bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost)
 bool checkFeasibilityEachFlamingo(Flamingo *fl)
 {
     bool checkFeasibility = true;
+    // initialize with the fixed cost
     double cost = prog_params.fixed_cost_recharge * (*fl).vehicleList.size();
     // cout << " size " << f.size();
     // check the feasibility of each flamingo
@@ -179,7 +185,7 @@ bool checkFeasibilityFlamingo()
  */
 void populateFlamingo()
 {
-    int flamingos = number_of_nodes / 4;
+    int flamingos = prog_params.num_of_vehicles;
 
     for (int flamingo = 0; flamingo < flamingos; flamingo++)
     {
@@ -188,7 +194,8 @@ void populateFlamingo()
         while (!feasibility)
         {
             // get how many vehicles for this flamingo randomly
-            int vehicles = random(prog_params.num_of_vehicles / 4, prog_params.num_of_vehicles / 2);
+            int vehicles = random(1, prog_params.num_of_vehicles / 2);
+            // int vehicles = 25;
 
             fl = Flamingo(vehicles, prog_params.num_of_customers, prog_params.num_of_recharge);
 
@@ -275,27 +282,27 @@ bool rankFlamingos(Flamingo f1, Flamingo f2)
     return (f1.cost < f2.cost);
 }
 
-void flamingoSearchAlgorithm(vector<Flamingo> f)
+void flamingoSearchAlgorithm(vector<Flamingo> *f)
 {
     // initilize scoring
 
     // get ranking
-    prevRank = f;
-    f.clear();
+    prevRank = (*f);
+    (*f).clear();
 
     // make foraging operator history
     vector<int> ops;
 
     // divide the flamingo into 2 groups
-    int middle = ceil(prevRank.size() * group_ratio);
+    middle = ceil(prevRank.size() * group_ratio);
     cout << endl
          << "middle " << middle;
     // foraging group
-    int f_start = 0, f_end = middle;
+    f_start = 0, f_end = middle;
     cout << endl
          << "foraging: " << f_start << " " << f_end;
     // migrating group
-    int m_start = middle, m_end = prevRank.size();
+    m_start = middle, m_end = prevRank.size();
     cout << endl
          << "migrating: " << m_start << " " << m_end;
     // update foraging group
@@ -329,10 +336,17 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
                  << "count " << count++;
             // check feasibilty, calculating the cost is inside the checkFeasibilityEachFlamingo()
             feasibility = checkFeasibilityEachFlamingo(&temp);
+
+            // go back to previous rank if it reaches 1000 iterations
+            if(count == 1000){
+                temp = prevRank[x];
+                break;
+            }
+
         } while (!feasibility); //  || temp.cost > prevRank[x].cost
 
         // update current flamingo
-        f.push_back(temp);
+        (*f).push_back(temp);
 
         // cout << endl
         //      << "feasiblity " << feasibility;
@@ -350,7 +364,7 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
         //      << "score " << score;
         // update score of flamingo operator
         foraging.setScore(op, score);
-        foraging.displayScores();
+        // foraging.displayScores();
     }
 
     // update migrating group
@@ -380,21 +394,27 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
                  << "count " << count++;
             // check feasibilty, calculating the cost is inside the checkFeasibilityEachFlamingo()
             feasibility = checkFeasibilityEachFlamingo(&currentFlamingo);
+
+            // go back to previous rank if it reaches 1000 iterations
+            if(count == 1000){
+                currentFlamingo = prevRank[x];
+                break;
+            }
         } while (!feasibility);
 
         // update current flamingo
-        f.push_back(currentFlamingo);
+        (*f).push_back(currentFlamingo);
 
         // cout << endl
         //      << "feasiblity " << feasibility;
     }
 
-    for (int ctr = 0; ctr < f.size(); ctr++)
+    for (int ctr = 0; ctr < (*f).size(); ctr++)
     {
         string f_type = (ctr < m_start) ? "foraging" : "migrating";
         cout << endl
              << f_type << " flamingo [" << ctr << "]"
-             << " previous (" << prevRank[ctr].vehicleList.size() << ") cost: " << prevRank[ctr].cost << " current (" << f[ctr].vehicleList.size() << ") cost: " << f[ctr].cost;
+             << " previous (" << prevRank[ctr].vehicleList.size() << ") cost: " << prevRank[ctr].cost << " current (" << (*f)[ctr].vehicleList.size() << ") cost: " << (*f)[ctr].cost << " Delta: " << ((*f)[ctr].cost - (*f)[0].cost) / (*f)[ctr].cost;
 
         if (ctr < m_start)
             cout << "opeartor: " << ops[ctr];
@@ -402,21 +422,22 @@ void flamingoSearchAlgorithm(vector<Flamingo> f)
     foraging.displayScores();
 }
 
-bool isConverged(int *ai_kun)
+bool isConverged(int *iterations)
 {
     // bool isConvergent = false;
 
     // float flamingo_delta = f[0].cost - prevRank[0];
     cout << " " << prevRank.size() << " " << prevRank[prevRank.size()].cost << endl;
+    cout << endl << "iteration: " << (*iterations)++;
 
-    return (*ai_kun)++ < 5 ? true : false;
+    return (f[f_end].cost - f[0].cost) / f[0].cost > 0.01 ? true : false;
 }
 
 int main()
 {
     // Seed the random number generator with the current time
     srand(static_cast<unsigned int>(time(0)));
-    readFile("data/100/datos-10-N100.txt");
+    readFile("data/400/datos-10-N400.txt");
     cout << fixed << setprecision(9);
     distance_matrix = initializeDistanceMatrix(); // create a distance matrix beforehand
 
@@ -430,12 +451,12 @@ int main()
     int iterations = 0;
     do
     {
-        flamingoSearchAlgorithm(f);
+        flamingoSearchAlgorithm(&f);
         sort(f.begin(), f.end(), rankFlamingos);
     } while (isConverged(&iterations));
 
     cout << "done flamingo" << endl;
-    //     displayFlamingoPopulation(f, "flamingo_population.txt");
+        displayFlamingoPopulation(f, "flamingo_population.txt");
 
     //     bool check = checkFeasibilityFlamingo();
     //     cout << endl << "check is " << check;

@@ -176,6 +176,72 @@ bool checkFeasibilityFlamingo()
 }
 
 /**
+ * @brief generate a list of nodes visited by a vehicle
+ *
+ * @param v vector of nodes representing the route of a vehicle
+ * @return ** set<int> list of nodes visited by a vehicle
+ */
+set<int> getVehicleCustomers(vector<Vehicle> v)
+{
+    set<int> customer_list;
+
+    for (int ctr = 0; ctr < v.size(); ctr++)
+    {
+        if (v[ctr].nodeType == 'C')
+            customer_list.insert(v[ctr].nodeIndx);
+    }
+
+    return customer_list;
+}
+
+/**
+ * @brief get the node index of the nearest node to the previous node
+ *
+ * @param customer_list list of customer nodes in the vehicle
+ * @param previousNode name / index on the distance matrix of previous node
+ * @return ** int node of nearest customer
+ */
+int getNearestCustomer(set<int> customer_list, int previousNode)
+{
+    // iterate through the customer_list to look for the nearest node
+    int nearestCustomer = c_nodes[random(1, 50)].getName();
+    for (set<int>::iterator x = customer_list.begin(); x != customer_list.end(); x++)
+    {
+        int current_node = c_nodes[*x].getName();
+        if ((*distance_matrix)[previousNode][current_node] < (*distance_matrix)[previousNode][nearestCustomer])
+            current_node = nearestCustomer;
+    }
+
+    return nearestCustomer;
+}
+
+/**
+ * @brief get the node index of the nearest node to the previous node
+ *
+ * @param customer_list list of customer nodes in the vehicle
+ * @param previousNode name / index on the distance matrix of previous node
+ * @return ** int node of nearest customer
+ */
+void arrangeNodes(vector<vector<Vehicle>> *v_list)
+{
+
+    // iterate through vehicleList
+    for (int x = 0; x < (*v_list).size(); x++)
+    {
+        // get list of customer nodes visited by vehicle
+        set<int> customer_list = getVehicleCustomers((*v_list)[x]);
+        // iterate through vehicle
+        for (int y = 1; y < (*v_list)[x].size(); y++)
+        {
+            int nearest_customer = getNearestCustomer(customer_list, getName((*v_list)[x][y - 1]));
+            (*v_list)[x][y].nodeIndx = nearest_customer;
+            (*v_list)[x][y].time = c_nodes[nearest_customer].getServiceTime();
+            customer_list.erase(nearest_customer);
+        }
+    }
+}
+
+/**
  * @brief generate initial population of flamingo
  *
  * customers are all visited atleast once
@@ -191,7 +257,7 @@ void populateFlamingo()
     {
         bool feasibility = false;
         Flamingo fl;
-        while (!feasibility)
+        do
         {
             // get how many vehicles for this flamingo randomly
             int vehicles = random(1, prog_params.num_of_vehicles / 2);
@@ -262,8 +328,9 @@ void populateFlamingo()
                 // end every route with a depot
                 fl.insertNodetoVehicle(vehicle, getDepot());
             }
+            arrangeNodes(&fl.vehicleList);
             feasibility = checkFeasibilityEachFlamingo(&fl);
-        }
+        } while (!feasibility);
 
         // insert flamingo to the population
         f.push_back(fl);
@@ -338,7 +405,8 @@ void flamingoSearchAlgorithm(vector<Flamingo> *f)
             feasibility = checkFeasibilityEachFlamingo(&temp);
 
             // go back to previous rank if it reaches 1000 iterations
-            if(count == 1000){
+            if (count == 1000)
+            {
                 temp = prevRank[x];
                 break;
             }
@@ -396,7 +464,8 @@ void flamingoSearchAlgorithm(vector<Flamingo> *f)
             feasibility = checkFeasibilityEachFlamingo(&currentFlamingo);
 
             // go back to previous rank if it reaches 1000 iterations
-            if(count == 1000){
+            if (count == 1000)
+            {
                 currentFlamingo = prevRank[x];
                 break;
             }
@@ -428,12 +497,14 @@ bool isConverged(int *iterations)
 
     // float flamingo_delta = f[0].cost - prevRank[0];
     // cout << " " << prevRank.size() << " " << prevRank[prevRank.size()].cost << endl;
+    (*iterations)++;
     // cout << endl << "iteration: " << (*iterations)++;
 
     return (f[f_end].cost - f[0].cost) / f[0].cost > 0.001 ? true : false;
 }
 
-void readFiles(string filename){
+void readFiles(string filename)
+{
     clock_t begin = clock();
     // Seed the random number generator with the current time
     srand(static_cast<unsigned int>(time(0)));
@@ -460,7 +531,8 @@ void readFiles(string filename){
     /* here, do your time-consuming job */
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-    cout << endl << filename << " time spent: " << time_spent << " seconds";
+    cout << endl
+         << filename << " time spent: " << time_spent << " seconds";
 
     string output_file = filename.erase(filename.find(".txt"), 4) + "_flamingo_population.txt";
 
@@ -472,13 +544,18 @@ void readFiles(string filename){
 int main()
 {
     string data[] = {"100", "200", "400"};
-    for(string n_count : data){
-        for(int x = 10; x < 20; x++){
-            string filename = "data/" + n_count + "/datos-" + to_string(x) + "-N" + n_count + ".txt"; 
+    for (string n_count : data)
+    {
+        for (int x = 10; x < 20; x++)
+        {
+            string filename = "data/" + n_count + "/datos-" + to_string(x) + "-N" + n_count + ".txt";
             readFiles(filename);
         }
     }
-        // bool check = checkFeasibilityFlamingo();
+
+    // readFiles("data/100/datos-10-N100.txt");
+
+    // bool check = checkFeasibilityFlamingo();
     //     cout << endl << "check is " << check;
     //     cout << endl << endl << endl;
     //     for(int flamingo = 0; flamingo < f.size(); flamingo++){

@@ -176,46 +176,6 @@ bool checkFeasibilityFlamingo()
 }
 
 /**
- * @brief generate a list of nodes visited by a vehicle
- *
- * @param v vector of nodes representing the route of a vehicle
- * @return ** set<int> list of nodes visited by a vehicle
- */
-set<int> getVehicleCustomers(vector<Vehicle> v)
-{
-    set<int> customer_list;
-
-    for (int ctr = 0; ctr < v.size(); ctr++)
-    {
-        if (v[ctr].nodeType == 'C')
-            customer_list.insert(v[ctr].nodeIndx);
-    }
-
-    return customer_list;
-}
-
-/**
- * @brief get the node index of the nearest node to the previous node
- *
- * @param customer_list list of customer nodes in the vehicle
- * @param previousNode name / index on the distance matrix of previous node
- * @return ** int node of nearest customer
- */
-int getNearestCustomer(set<int> customer_list, int previousNode)
-{
-    // iterate through the customer_list to look for the nearest node
-    int nearestCustomer = c_nodes[random(1, 50)].getName();
-    for (set<int>::iterator x = customer_list.begin(); x != customer_list.end(); x++)
-    {
-        int current_node = c_nodes[*x].getName();
-        if ((*distance_matrix)[previousNode][current_node] < (*distance_matrix)[previousNode][nearestCustomer])
-            current_node = nearestCustomer;
-    }
-
-    return nearestCustomer;
-}
-
-/**
  * @brief get the node index of the nearest node to the previous node
  *
  * @param customer_list list of customer nodes in the vehicle
@@ -229,14 +189,34 @@ void arrangeNodes(vector<vector<Vehicle>> *v_list)
     for (int x = 0; x < (*v_list).size(); x++)
     {
         // get list of customer nodes visited by vehicle
-        set<int> customer_list = getVehicleCustomers((*v_list)[x]);
-        // iterate through vehicle
-        for (int y = 1; y < (*v_list)[x].size(); y++)
+        set<int> customer_list;
+        for (int ctr = 0; ctr < (*v_list)[x].size(); ctr++)
         {
-            int nearest_customer = getNearestCustomer(customer_list, getName((*v_list)[x][y - 1]));
-            (*v_list)[x][y].nodeIndx = nearest_customer;
-            (*v_list)[x][y].time = c_nodes[nearest_customer].getServiceTime();
-            customer_list.erase(nearest_customer);
+            if ((*v_list)[x][ctr].nodeType == 'C')
+                customer_list.insert((*v_list)[x][ctr].nodeIndx);
+        }
+
+        // iterate through vehicle
+        for (vector<Vehicle>::iterator node = (*v_list)[x].begin() + 1; node != (*v_list)[x].end(); node++)
+        {
+            if ((*node).nodeType == 'C')
+            {
+                Vehicle nearest_customer = (*node);
+                Vehicle previousNode = (*(next(node, -1)));
+                set<int>::iterator x = customer_list.begin();
+
+                // iterate through the customer_list to look for the nearest node
+                for (; x != customer_list.end(); x++)
+                {
+                    int current_node = (*x);
+                    if ((*distance_matrix)[getName(previousNode)][c_nodes[current_node].getName()] < (*distance_matrix)[getName(previousNode)][getName(nearest_customer)])
+                        current_node = nearest_customer.nodeIndx;
+                }
+
+                (*node).nodeIndx = nearest_customer.nodeIndx;
+                (*node).time = c_nodes[nearest_customer.nodeIndx].getServiceTime();
+                customer_list.erase(nearest_customer.nodeIndx);
+            }
         }
     }
 }
@@ -328,7 +308,7 @@ void populateFlamingo()
                 // end every route with a depot
                 fl.insertNodetoVehicle(vehicle, getDepot());
             }
-            arrangeNodes(&fl.vehicleList);
+            arrangeNodes(&(fl.vehicleList));
             feasibility = checkFeasibilityEachFlamingo(&fl);
         } while (!feasibility);
 
@@ -399,8 +379,8 @@ void flamingoSearchAlgorithm(vector<Flamingo> *f)
             op = callForagingOperator(&temp);
             ops.push_back(op);
 
-            // cout << endl
-            //      << "count " << count++;
+            cout << endl
+                 << "foraging count " << count++;
             // check feasibilty, calculating the cost is inside the checkFeasibilityEachFlamingo()
             feasibility = checkFeasibilityEachFlamingo(&temp);
 
@@ -457,9 +437,10 @@ void flamingoSearchAlgorithm(vector<Flamingo> *f)
             bestFlamingo = prevRank[0];
 
             migrateFlamingo(&currentFlamingo, bestFlamingo);
+            arrangeNodes(&(currentFlamingo.vehicleList));
 
-            // cout << endl
-            //      << "count " << count++;
+            cout << endl
+                 << " migratory count " << count++;
             // check feasibilty, calculating the cost is inside the checkFeasibilityEachFlamingo()
             feasibility = checkFeasibilityEachFlamingo(&currentFlamingo);
 
@@ -498,7 +479,7 @@ bool isConverged(int *iterations)
     // float flamingo_delta = f[0].cost - prevRank[0];
     // cout << " " << prevRank.size() << " " << prevRank[prevRank.size()].cost << endl;
     (*iterations)++;
-    // cout << endl << "iteration: " << (*iterations)++;
+    cout << endl << "iteration: " << (*iterations)++;
 
     return (f[f_end].cost - f[0].cost) / f[0].cost > 0.001 ? true : false;
 }
@@ -543,17 +524,17 @@ void readFiles(string filename)
 
 int main()
 {
-    string data[] = {"100", "200", "400"};
-    for (string n_count : data)
-    {
-        for (int x = 10; x < 20; x++)
-        {
-            string filename = "data/" + n_count + "/datos-" + to_string(x) + "-N" + n_count + ".txt";
-            readFiles(filename);
-        }
-    }
+    // string data[] = {"100", "200", "400"};
+    // for (string n_count : data)
+    // {
+    //     for (int x = 10; x < 20; x++)
+    //     {
+    //         string filename = "data/" + n_count + "/datos-" + to_string(x) + "-N" + n_count + ".txt";
+    //         readFiles(filename);
+    //     }
+    // }
 
-    // readFiles("data/100/datos-10-N100.txt");
+    readFiles("data/100/datos-20-N100.txt");
 
     // bool check = checkFeasibilityFlamingo();
     //     cout << endl << "check is " << check;

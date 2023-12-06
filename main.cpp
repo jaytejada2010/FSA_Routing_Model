@@ -36,6 +36,8 @@ int f_start = 0, f_end = 0;
 int m_start = 0, m_end = 0;
 
 vector<Flamingo> f, prevRank;
+vector<double> maxDiff;
+vector<double> leader_cost;
 int number_of_nodes = 0;
 
 Matrix *distance_matrix = NULL;
@@ -119,7 +121,13 @@ bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost)
     }
 
     if (total_demand > prog_params.vehicle_capacity || total_time > prog_params.time_max)
+    {
         checkFeasibility = false;
+        if (total_demand > prog_params.vehicle_capacity)
+            cout << "Demand exceeded capacity. " << total_demand << endl;
+        if (total_time > prog_params.time_max)
+            cout << "Travel time exceeded max. " << total_time << endl;
+    }
 
     // cout << endl
     //      << "\ttotal demand: " << total_demand << "(" << prog_params.vehicle_capacity << ")"
@@ -240,7 +248,8 @@ void populateFlamingo()
         do
         {
             // get how many vehicles for this flamingo randomly
-            int vehicles = random(1, prog_params.num_of_vehicles / 2);
+            int vehicles = prog_params.num_of_vehicles;
+            // int vehicles = random(1, prog_params.num_of_vehicles);
             // int vehicles = 25;
 
             fl = Flamingo(vehicles, prog_params.num_of_customers, prog_params.num_of_recharge);
@@ -379,19 +388,20 @@ void flamingoSearchAlgorithm(vector<Flamingo> *f)
             op = callForagingOperator(&temp);
             ops.push_back(op);
 
-            cout << endl
-                 << "foraging count " << count++;
+            // cout << endl
+            //      << "foraging count " << count;
+            count++;
             // check feasibilty, calculating the cost is inside the checkFeasibilityEachFlamingo()
             feasibility = checkFeasibilityEachFlamingo(&temp);
 
             // go back to previous rank if it reaches 1000 iterations
-            if (count == 1000)
+            if (count == 25)
             {
                 temp = prevRank[x];
                 break;
             }
 
-        } while (!feasibility); //  || temp.cost > prevRank[x].cost
+        } while (!feasibility || temp.cost > prevRank[x].cost); //
 
         // update current flamingo
         (*f).push_back(temp);
@@ -439,18 +449,19 @@ void flamingoSearchAlgorithm(vector<Flamingo> *f)
             migrateFlamingo(&currentFlamingo, bestFlamingo);
             arrangeNodes(&(currentFlamingo.vehicleList));
 
-            cout << endl
-                 << " migratory count " << count++;
+            // cout << endl
+            //      << x << " migratory count " << count;
+            count++;
             // check feasibilty, calculating the cost is inside the checkFeasibilityEachFlamingo()
             feasibility = checkFeasibilityEachFlamingo(&currentFlamingo);
 
             // go back to previous rank if it reaches 1000 iterations
-            if (count == 1000)
+            if (count == 25)
             {
                 currentFlamingo = prevRank[x];
                 break;
             }
-        } while (!feasibility);
+        } while (!feasibility || currentFlamingo.cost > prevRank[x].cost);
 
         // update current flamingo
         (*f).push_back(currentFlamingo);
@@ -479,13 +490,51 @@ bool isConverged(int *iterations)
     // float flamingo_delta = f[0].cost - prevRank[0];
     // cout << " " << prevRank.size() << " " << prevRank[prevRank.size()].cost << endl;
     (*iterations)++;
-    cout << endl << "iteration: " << (*iterations)++;
+    // cout << endl
+    //      << "iteration: " << (*iterations);
+    set<double> diff_set;
+    double diff_indiv, sum = 0;
+    for (int x = 0; x < f.size(); x++)
+    {
+        diff_indiv = (prevRank[x].cost - f[x].cost) / prevRank[x].cost;
+        sum += diff_indiv;
+        diff_set.insert(diff_indiv);
+        // cout << prevRank[x].cost << " " << f[x].cost << " " << prevRank[x].cost - f[x].cost << endl;
+    }
 
-    return (f[f_end].cost - f[0].cost) / f[0].cost > 0.001 ? true : false;
+    // for (set<double>::iterator d = diff_set.begin(); d != diff_set.end(); d++)
+    // {
+    //     cout << endl
+    //          << "Max: " << *d;
+    // }
+    maxDiff.push_back(*diff_set.rbegin());
+
+    // cout << "Average: " << sum / f.size() << endl;
+
+    return (*diff_set.rbegin() > 0) ? true : false;
+    // return (f[m_start].cost - f[0].cost) / f[0].cost > 0.15 ? true : false;
+    // return (*iterations) < 50 ? true : false;
+}
+
+void printCosts(string filename)
+{
+    ofstream file;
+    file.open(filename, ios::app);
+
+    int ctr = 0;
+    for (vector<double>::iterator l = leader_cost.begin(); l != leader_cost.end(); l++, ctr++)
+    {
+        file << endl
+             << "Iteration " << ctr << " Leader Cost: " << *l;
+    }
+
+    file.close();
 }
 
 void readFiles(string filename)
 {
+    maxDiff.clear();
+    leader_cost.clear();
     clock_t begin = clock();
     // Seed the random number generator with the current time
     srand(static_cast<unsigned int>(time(0)));
@@ -501,12 +550,18 @@ void readFiles(string filename)
 
     // ranking the flamingo
     sort(f.begin(), f.end(), rankFlamingos);
+    leader_cost.push_back(f[0].cost);
+
+    string output_file = filename.erase(filename.find(".txt"), 4) + "_flamingo_population.txt";
+    cout << "print on file " << output_file.erase(0, 9) << endl;
 
     int iterations = 0;
     do
     {
         flamingoSearchAlgorithm(&f);
         sort(f.begin(), f.end(), rankFlamingos);
+        leader_cost.push_back(f[0].cost);
+        // displayFlamingoPopulation(f, output_file, iterations);
     } while (isConverged(&iterations));
 
     /* here, do your time-consuming job */
@@ -514,27 +569,25 @@ void readFiles(string filename)
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     cout << endl
          << filename << " time spent: " << time_spent << " seconds";
-
-    string output_file = filename.erase(filename.find(".txt"), 4) + "_flamingo_population.txt";
+    printCosts(output_file);
+    printTime(maxDiff, output_file, time_spent);
 
     cout << "done flamingo" << endl;
-    cout << "print on file " << output_file.erase(0, 9) << endl;
-    displayFlamingoPopulation(f, output_file);
 }
 
 int main()
 {
-    // string data[] = {"100", "200", "400"};
-    // for (string n_count : data)
-    // {
-    //     for (int x = 10; x < 20; x++)
-    //     {
-    //         string filename = "data/" + n_count + "/datos-" + to_string(x) + "-N" + n_count + ".txt";
-    //         readFiles(filename);
-    //     }
-    // }
+    string data[] = {"200"};
+    for (string n_count : data)
+    {
+        for (int x = 20; x < 30; x++)
+        {
+            string filename = "data/" + n_count + "/datos-" + to_string(x) + "-N" + n_count + ".txt";
+            readFiles(filename);
+        }
+    }
 
-    readFiles("data/100/datos-20-N100.txt");
+    // readFiles("data/100/datos-10-N100.txt");
 
     // bool check = checkFeasibilityFlamingo();
     //     cout << endl << "check is " << check;

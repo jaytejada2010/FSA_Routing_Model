@@ -3,10 +3,10 @@
  * the migrating flamingo is compared with the leader flamingo and
  * an array of the differences is returned
  *
- * @param curr pass by value to avoid manipulation, best pass by value to avoid manipulation
+ * @param curr pass by value to avoid manipulation
+ * @param best pass by value to avoid manipulation
  * @return ** void
  */
-
 set<int> getDifferenceSet(Flamingo curr, Flamingo best)
 {
     // creating the difference set
@@ -23,19 +23,16 @@ set<int> getDifferenceSet(Flamingo curr, Flamingo best)
         int shorterVehicleLength = min(curr.vehicleList[vehicle].size(), best.vehicleList[vehicle].size());
         int longerVehicleLength = max(curr.vehicleList[vehicle].size(), best.vehicleList[vehicle].size());
 
-        int node = 0;
+        int node;
 
         // iterate through the nodes of the vehicles up to shorter vehicle length
+        for (node = 1; curr.vehicleList[vehicle][node].nodeIndx == best.vehicleList[vehicle][node].nodeIndx && node < shorterVehicleLength; node++);
         for (; node < shorterVehicleLength; node++)
         {
-            // check if any if the nodes are the different
-            if (curr.vehicleList[vehicle][node].nodeIndx != best.vehicleList[vehicle][node].nodeIndx)
-            {
-                if (curr.vehicleList[vehicle][node].nodeType == 'C')
-                    difference.insert(curr.vehicleList[vehicle][node].nodeIndx);
-                if (best.vehicleList[vehicle][node].nodeType == 'C')
-                    difference.insert(best.vehicleList[vehicle][node].nodeIndx);
-            }
+            if (curr.vehicleList[vehicle][node].nodeType == 'C')
+                difference.insert(curr.vehicleList[vehicle][node].nodeIndx);
+            if (best.vehicleList[vehicle][node].nodeType == 'C')
+                difference.insert(best.vehicleList[vehicle][node].nodeIndx);
         }
 
         // choose the longer vehicle
@@ -80,7 +77,9 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
     set<int> difference = getDifferenceSet(*curr, best);
 
     // get how many vehicles in the flamingo by getting the ceiling of half of the sum of two sizes
-    int vehicles = floor(((*curr).vehicleList.size() + best.vehicleList.size()) / 2);
+    // int vehicles = floor(((*curr).vehicleList.size() + best.vehicleList.size()) / 2);
+    // int vehicles = random(1, (*curr).vehicleList.size());
+    int vehicles = prog_params.num_of_vehicles;
 
     Flamingo fl(vehicles, prog_params.num_of_customers, prog_params.num_of_recharge);
 
@@ -94,8 +93,6 @@ void migrateFlamingo(Flamingo *curr, Flamingo best)
     // migrating filling customer nodes
     // iterating through current flamingo's vehicles
     int v = 0;
-
-    int curr_v_count = 0;
     for (; v < (*curr).vehicleList.size() && v < vehicles && !fl.unvisitedCustomers.empty(); v++)
     {
         int node_iter = 0;

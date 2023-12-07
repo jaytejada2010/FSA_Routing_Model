@@ -38,6 +38,7 @@ int m_start = 0, m_end = 0;
 vector<Flamingo> f, prevRank;
 vector<double> maxDiff;
 vector<double> leader_cost;
+vector<double> leader_fitness;
 int number_of_nodes = 0;
 
 Matrix *distance_matrix = NULL;
@@ -50,7 +51,7 @@ Matrix *distance_matrix = NULL;
  * @return false if not feasible
  */
 
-bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost)
+bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost, double *time)
 {
     bool checkFeasibility = true;
     double total_distance = 0;
@@ -128,6 +129,8 @@ bool checkFesaibilityVehicle(vector<Vehicle> v, double *cost)
         if (total_time > prog_params.time_max)
             cout << "Travel time exceeded max. " << total_time << endl;
     }
+    else
+        (*time) += total_time;
 
     // cout << endl
     //      << "\ttotal demand: " << total_demand << "(" << prog_params.vehicle_capacity << ")"
@@ -146,17 +149,19 @@ bool checkFeasibilityEachFlamingo(Flamingo *fl)
     bool checkFeasibility = true;
     // initialize with the fixed cost
     double cost = prog_params.fixed_cost_recharge * (*fl).vehicleList.size();
+    double time = 0;
     // cout << " size " << f.size();
     // check the feasibility of each flamingo
     for (int vehicle = 0; vehicle < (*fl).vehicleList.size() && checkFeasibility; vehicle++)
     {
         // cout << endl
         //      << "Vehicle: " << vehicle;
-        checkFeasibility = checkFesaibilityVehicle((*fl).vehicleList[vehicle], &cost);
+        checkFeasibility = checkFesaibilityVehicle((*fl).vehicleList[vehicle], &cost, &time);
     }
 
     // update cost
     (*fl).cost = cost;
+    (*fl).fitness = time;
     // cout << endl
     //      << "total cost " << (*fl).cost << endl;
 
@@ -395,7 +400,7 @@ void flamingoSearchAlgorithm(vector<Flamingo> *f)
             feasibility = checkFeasibilityEachFlamingo(&temp);
 
             // go back to previous rank if it reaches 1000 iterations
-            if (count == 25)
+            if (count == 10)
             {
                 temp = prevRank[x];
                 break;
@@ -456,7 +461,7 @@ void flamingoSearchAlgorithm(vector<Flamingo> *f)
             feasibility = checkFeasibilityEachFlamingo(&currentFlamingo);
 
             // go back to previous rank if it reaches 1000 iterations
-            if (count == 25)
+            if (count == 10)
             {
                 currentFlamingo = prevRank[x];
                 break;
@@ -521,11 +526,10 @@ void printCosts(string filename)
     ofstream file;
     file.open(filename, ios::app);
 
-    int ctr = 0;
-    for (vector<double>::iterator l = leader_cost.begin(); l != leader_cost.end(); l++, ctr++)
+    for (int ctr = 0; ctr < leader_cost.size(); ctr++)
     {
         file << endl
-             << "Iteration " << ctr << " Leader Cost: " << *l;
+             << "Iteration " << ctr << " Leader Cost: " << leader_cost[ctr] << " Leader Fitness: " << leader_fitness[ctr];
     }
 
     file.close();
@@ -551,6 +555,7 @@ void readFiles(string filename)
     // ranking the flamingo
     sort(f.begin(), f.end(), rankFlamingos);
     leader_cost.push_back(f[0].cost);
+    leader_fitness.push_back(f[0].fitness);
 
     string output_file = filename.erase(filename.find(".txt"), 4) + "_flamingo_population.txt";
     cout << "print on file " << output_file.erase(0, 9) << endl;
@@ -561,6 +566,7 @@ void readFiles(string filename)
         flamingoSearchAlgorithm(&f);
         sort(f.begin(), f.end(), rankFlamingos);
         leader_cost.push_back(f[0].cost);
+        leader_fitness.push_back(f[0].fitness);
         // displayFlamingoPopulation(f, output_file, iterations);
     } while (isConverged(&iterations));
 
@@ -577,17 +583,17 @@ void readFiles(string filename)
 
 int main()
 {
-    string data[] = {"200"};
-    for (string n_count : data)
-    {
-        for (int x = 20; x < 30; x++)
-        {
-            string filename = "data/" + n_count + "/datos-" + to_string(x) + "-N" + n_count + ".txt";
-            readFiles(filename);
-        }
-    }
+    // string data[] = {"400"};
+    // for (string n_count : data)
+    // {
+    //     for (int x = 10; x < 20; x++)
+    //     {
+    //         string filename = "data/" + n_count + "/datos-" + to_string(x) + "-N" + n_count + ".txt";
+    //         readFiles(filename);
+    //     }
+    // }
 
-    // readFiles("data/100/datos-10-N100.txt");
+    readFiles("data/400/datos-19-N400.txt");
 
     // bool check = checkFeasibilityFlamingo();
     //     cout << endl << "check is " << check;

@@ -45,6 +45,7 @@ class Vehicle{
 class Flamingo{
     public:
         double cost;
+        double fitness;
         vector<vector<Vehicle>> vehicleList;  // multi-dimensional 
         set<int> unvisitedCustomers; // set that holds the index of customers that are not yet visited
         set<int> unvisitedRecharge; // set that holds the index of recharge stations that are not yet visited

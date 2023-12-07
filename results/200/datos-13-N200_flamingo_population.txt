@@ -1,0 +1,67 @@
+
+Iteration 0 Leader Cost: 114.18 Leader Fitness: 3255.76
+Iteration 1 Leader Cost: 114.18 Leader Fitness: 3255.76
+Iteration 2 Leader Cost: 114.18 Leader Fitness: 3255.76
+Iteration 3 Leader Cost: 114.18 Leader Fitness: 3255.76
+Iteration 4 Leader Cost: 114.177 Leader Fitness: 3248.56
+Iteration 5 Leader Cost: 114.177 Leader Fitness: 3248.56
+Iteration 6 Leader Cost: 114.177 Leader Fitness: 3248.56
+Iteration 7 Leader Cost: 114.177 Leader Fitness: 3248.56
+Iteration 8 Leader Cost: 114.165 Leader Fitness: 3226.67
+Iteration 9 Leader Cost: 114.165 Leader Fitness: 3226.67
+Iteration 10 Leader Cost: 114.165 Leader Fitness: 3226.67
+Iteration 11 Leader Cost: 114.165 Leader Fitness: 3226.67
+Iteration 12 Leader Cost: 114.165 Leader Fitness: 3226.67
+Iteration 13 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 14 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 15 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 16 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 17 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 18 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 19 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 20 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 21 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 22 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 23 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 24 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 25 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 26 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 27 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 28 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 29 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 30 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 31 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 32 Leader Cost: 114.162 Leader Fitness: 3220.77
+Iteration 0 Max Delta: 0.000277829
+Iteration 1 Max Delta: 9.68569e-05
+Iteration 2 Max Delta: 0.000110958
+Iteration 3 Max Delta: 0.0001208
+Iteration 4 Max Delta: 7.25232e-05
+Iteration 5 Max Delta: 2.28295e-05
+Iteration 6 Max Delta: 1.96725e-05
+Iteration 7 Max Delta: 0.000111001
+Iteration 8 Max Delta: 1.31412e-05
+Iteration 9 Max Delta: 2.84531e-05
+Iteration 10 Max Delta: 2.95327e-05
+Iteration 11 Max Delta: 2.58571e-05
+Iteration 12 Max Delta: 2.75812e-05
+Iteration 13 Max Delta: 8.36243e-06
+Iteration 14 Max Delta: 1.27817e-05
+Iteration 15 Max Delta: 1.9355e-05
+Iteration 16 Max Delta: 1.24459e-16
+Iteration 17 Max Delta: 3.94993e-05
+Iteration 18 Max Delta: 1.34526e-05
+Iteration 19 Max Delta: 1.7865e-05
+Iteration 20 Max Delta: 1.89045e-05
+Iteration 21 Max Delta: 2.29253e-05
+Iteration 22 Max Delta: 1.14607e-05
+Iteration 23 Max Delta: 2.35417e-05
+Iteration 24 Max Delta: 1.88344e-05
+Iteration 25 Max Delta: 1.24469e-16
+Iteration 26 Max Delta: 1.24455e-16
+Iteration 27 Max Delta: 1.24454e-16
+Iteration 28 Max Delta: 1.24454e-16
+Iteration 29 Max Delta: 1.24454e-16
+Iteration 30 Max Delta: 1.24454e-16
+Iteration 31 Max Delta: 0
+Execution Time: 7.308 seconds

@@ -1,0 +1,27 @@
+
+Iteration 0 Leader Cost: 57.1127 Leader Fitness: 1699.17
+Iteration 1 Leader Cost: 57.1067 Leader Fitness: 1687.94
+Iteration 2 Leader Cost: 57.1067 Leader Fitness: 1687.94
+Iteration 3 Leader Cost: 57.1067 Leader Fitness: 1687.94
+Iteration 4 Leader Cost: 57.1066 Leader Fitness: 1687.65
+Iteration 5 Leader Cost: 57.1064 Leader Fitness: 1687.65
+Iteration 6 Leader Cost: 57.0974 Leader Fitness: 1668.93
+Iteration 7 Leader Cost: 57.097 Leader Fitness: 1668.93
+Iteration 8 Leader Cost: 57.097 Leader Fitness: 1668.93
+Iteration 9 Leader Cost: 57.097 Leader Fitness: 1668.93
+Iteration 10 Leader Cost: 57.0943 Leader Fitness: 1663.89
+Iteration 11 Leader Cost: 57.0943 Leader Fitness: 1663.89
+Iteration 12 Leader Cost: 57.0943 Leader Fitness: 1663.89
+Iteration 0 Max Delta: 0.000223514
+Iteration 1 Max Delta: 0.000294565
+Iteration 2 Max Delta: 0.000102431
+Iteration 3 Max Delta: 7.35728e-05
+Iteration 4 Max Delta: 8.67523e-05
+Iteration 5 Max Delta: 0.000156676
+Iteration 6 Max Delta: 2.19946e-05
+Iteration 7 Max Delta: 8.06457e-05
+Iteration 8 Max Delta: 2.86915e-05
+Iteration 9 Max Delta: 4.70778e-05
+Iteration 10 Max Delta: 4.14753e-07
+Iteration 11 Max Delta: 0
+Execution Time: 0.73 seconds

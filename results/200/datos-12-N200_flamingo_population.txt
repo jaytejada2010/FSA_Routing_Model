@@ -1,0 +1,51 @@
+
+Iteration 0 Leader Cost: 114.134 Leader Fitness: 3195.7
+Iteration 1 Leader Cost: 114.133 Leader Fitness: 3194.69
+Iteration 2 Leader Cost: 114.133 Leader Fitness: 3194.69
+Iteration 3 Leader Cost: 114.133 Leader Fitness: 3194.69
+Iteration 4 Leader Cost: 114.126 Leader Fitness: 3182.45
+Iteration 5 Leader Cost: 114.126 Leader Fitness: 3182.74
+Iteration 6 Leader Cost: 114.126 Leader Fitness: 3182.74
+Iteration 7 Leader Cost: 114.126 Leader Fitness: 3182.74
+Iteration 8 Leader Cost: 114.126 Leader Fitness: 3182.74
+Iteration 9 Leader Cost: 114.126 Leader Fitness: 3182.74
+Iteration 10 Leader Cost: 114.126 Leader Fitness: 3182.74
+Iteration 11 Leader Cost: 114.126 Leader Fitness: 3182.74
+Iteration 12 Leader Cost: 114.126 Leader Fitness: 3182.31
+Iteration 13 Leader Cost: 114.126 Leader Fitness: 3182.31
+Iteration 14 Leader Cost: 114.126 Leader Fitness: 3182.31
+Iteration 15 Leader Cost: 114.126 Leader Fitness: 3182.31
+Iteration 16 Leader Cost: 114.122 Leader Fitness: 3175.69
+Iteration 17 Leader Cost: 114.122 Leader Fitness: 3175.69
+Iteration 18 Leader Cost: 114.122 Leader Fitness: 3175.69
+Iteration 19 Leader Cost: 114.122 Leader Fitness: 3175.69
+Iteration 20 Leader Cost: 114.122 Leader Fitness: 3175.69
+Iteration 21 Leader Cost: 114.122 Leader Fitness: 3175.69
+Iteration 22 Leader Cost: 114.122 Leader Fitness: 3175.69
+Iteration 23 Leader Cost: 114.122 Leader Fitness: 3175.69
+Iteration 24 Leader Cost: 114.122 Leader Fitness: 3175.69
+Iteration 0 Max Delta: 6.46248e-05
+Iteration 1 Max Delta: 6.76653e-05
+Iteration 2 Max Delta: 4.5941e-05
+Iteration 3 Max Delta: 5.88114e-05
+Iteration 4 Max Delta: 4.10775e-05
+Iteration 5 Max Delta: 5.36763e-05
+Iteration 6 Max Delta: 4.10775e-05
+Iteration 7 Max Delta: 5.24775e-05
+Iteration 8 Max Delta: 2.08781e-05
+Iteration 9 Max Delta: 4.10002e-05
+Iteration 10 Max Delta: 2.55384e-05
+Iteration 11 Max Delta: 2.35142e-05
+Iteration 12 Max Delta: 4.03648e-05
+Iteration 13 Max Delta: 2.32378e-05
+Iteration 14 Max Delta: 3.12662e-05
+Iteration 15 Max Delta: 3.09553e-05
+Iteration 16 Max Delta: 2.95474e-05
+Iteration 17 Max Delta: 3.89132e-05
+Iteration 18 Max Delta: 1.42586e-05
+Iteration 19 Max Delta: 1.25027e-05
+Iteration 20 Max Delta: 2.88969e-05
+Iteration 21 Max Delta: 7.74763e-06
+Iteration 22 Max Delta: 1.42586e-05
+Iteration 23 Max Delta: 0
+Execution Time: 5.514 seconds
